@@ -11,7 +11,7 @@ export function GlassCard({
 }) {
   return (
     <div
-      className={`rounded-2xl border border-foreground/10 bg-glass/60 shadow-card backdrop-blur-xl ${
+      className={`rounded-2xl border border-foreground/[0.08] bg-glass/85 shadow-card backdrop-blur-xl ${
         className ?? ""
       }`}
     >

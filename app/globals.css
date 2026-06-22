@@ -8,12 +8,12 @@
 /* ───── Tema CLARO · crema con rosa empolvado + chocolate ───── */
 :root,
 [data-theme="light"] {
-  --background: 250 243 236; /* crema #FAF3EC */
-  --surface: 253 248 241; /* crema #FDF8F1 */
+  --background: 245 237 228; /* crema un punto mas profunda (para que las tarjetas resalten) */
+  --surface: 255 252 248; /* crema casi blanca (tarjetas elevadas) */
   --foreground: 58 42 34; /* chocolate oscuro legible */
   --muted: 140 110 96; /* chocolate suave */
-  --border: 221 205 191; /* borde chocolate suave #DDCDBF */
-  --glass: 253 248 241;
+  --border: 228 215 202; /* borde chocolate suave definido */
+  --glass: 255 252 248;
   --primary: 196 92 127; /* rosa empolvado #C45C7F */
   --primary-foreground: 253 248 241;
   --accent: 212 83 126; /* rosa vivo #D4537E */
@@ -47,6 +47,19 @@ body {
   color: rgb(var(--foreground));
   font-family: var(--font-sans), ui-sans-serif, system-ui, -apple-system,
     "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+}
+
+/* DM Serif Display solo trae peso 400: forzamos 400 para evitar "negrita falsa"
+   en los títulos. La serif a 400 ya tiene presencia. */
+.font-display {
+  font-weight: 400 !important;
+  letter-spacing: -0.01em;
+}
+
+/* Los números (tabular-nums) siempre en la sans, aunque hereden de un título
+   serif — evita cifras serif pesadas y mantiene el conteo estable. */
+.tabular-nums {
+  font-family: var(--font-sans), ui-sans-serif, system-ui, sans-serif;
 }
 
 /* ───── Shimmer para skeletons ───── */

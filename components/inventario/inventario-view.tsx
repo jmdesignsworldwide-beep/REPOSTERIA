@@ -55,7 +55,7 @@ export function InventarioView() {
             <StaggerItem key={k.label}>
               <GlassCard className="p-4 sm:p-5">
                 <p className="text-xs font-medium text-muted">{k.label}</p>
-                <p className={`mt-2 font-display text-2xl font-bold tabular-nums ${k.cls}`}>
+                <p className={`mt-2 text-2xl font-bold tabular-nums ${k.cls}`}>
                   <CountUp value={k.value} />
                 </p>
               </GlassCard>

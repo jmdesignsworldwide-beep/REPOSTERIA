@@ -68,12 +68,15 @@ export function AppShell({ children }: { children: React.ReactNode }) {
                 key={item.label}
                 href={item.href}
                 onClick={() => setOpen(false)}
-                className={`flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-medium transition-all ${
+                className={`relative flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm transition-colors ${
                   active
-                    ? "bg-primary text-primary-foreground shadow-glow"
-                    : "text-muted hover:bg-foreground/5 hover:text-foreground"
+                    ? "bg-primary/10 font-semibold text-primary"
+                    : "font-medium text-muted hover:bg-foreground/5 hover:text-foreground"
                 }`}
               >
+                {active && (
+                  <span className="absolute inset-y-1.5 left-0 w-1 rounded-full bg-primary" />
+                )}
                 <Icon className="h-[18px] w-[18px]" />
                 {item.label}
               </Link>

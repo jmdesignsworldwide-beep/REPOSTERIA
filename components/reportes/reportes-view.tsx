@@ -75,7 +75,7 @@ export function ReportesView() {
             <StaggerItem key={k.label}>
               <GlassCard className="p-4 sm:p-5">
                 <p className="text-xs font-medium text-muted">{k.label}</p>
-                <p className={`mt-2 font-display text-lg font-bold tabular-nums sm:text-2xl ${k.cls}`}>
+                <p className={`mt-2 text-lg font-bold tabular-nums sm:text-2xl ${k.cls}`}>
                   <CountUp value={k.value} prefix={k.prefix} suffix={k.suffix} />
                 </p>
               </GlassCard>
