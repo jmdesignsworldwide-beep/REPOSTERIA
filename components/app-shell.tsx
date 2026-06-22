@@ -49,14 +49,14 @@ export function AppShell({ children }: { children: React.ReactNode }) {
     <div className="min-h-screen">
       {/* ───────────── Sidebar ───────────── */}
       <aside
-        className={`fixed inset-y-0 left-0 z-40 flex w-64 transform flex-col bg-sidebar text-sidebar-foreground transition-transform duration-200 md:translate-x-0 ${
+        className={`fixed inset-y-0 left-0 z-40 flex w-64 transform flex-col border-r border-border bg-sidebar text-sidebar-foreground transition-transform duration-200 md:translate-x-0 ${
           open ? "translate-x-0" : "-translate-x-full"
         }`}
       >
-        <div className="flex h-16 shrink-0 items-center gap-2 border-b border-white/10 px-5">
+        <div className="flex h-16 shrink-0 items-center gap-2 border-b border-border px-5">
           <span className="text-xl">🍮</span>
           <span className="font-display text-lg font-semibold leading-tight">
-            Azúcar <span className="text-accent">&amp;</span> Canela
+            Azúcar <span className="text-primary">&amp;</span> Canela
           </span>
         </div>
         <nav className="flex flex-1 flex-col gap-1 overflow-y-auto p-3">
@@ -71,7 +71,7 @@ export function AppShell({ children }: { children: React.ReactNode }) {
                 className={`relative flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm transition-colors ${
                   active
                     ? "bg-primary font-semibold text-primary-foreground shadow-glow"
-                    : "font-medium text-sidebar-foreground/75 hover:bg-white/10 hover:text-sidebar-foreground"
+                    : "font-medium text-muted hover:bg-foreground/5 hover:text-foreground"
                 }`}
               >
                 <Icon className="h-[18px] w-[18px]" />

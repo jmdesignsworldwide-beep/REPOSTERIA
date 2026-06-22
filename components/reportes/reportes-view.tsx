@@ -95,20 +95,20 @@ export function ReportesView() {
                   <AreaChart data={VENTAS_MES} margin={{ left: -10, right: 8, top: 4 }}>
                     <defs>
                       <linearGradient id="gIng" x1="0" y1="0" x2="0" y2="1">
-                        <stop offset="0%" stopColor="#C45C7F" stopOpacity={0.5} />
-                        <stop offset="100%" stopColor="#C45C7F" stopOpacity={0} />
+                        <stop offset="0%" stopColor="#A85F52" stopOpacity={0.45} />
+                        <stop offset="100%" stopColor="#A85F52" stopOpacity={0} />
                       </linearGradient>
                       <linearGradient id="gCost" x1="0" y1="0" x2="0" y2="1">
-                        <stop offset="0%" stopColor="#7A2444" stopOpacity={0.35} />
-                        <stop offset="100%" stopColor="#7A2444" stopOpacity={0} />
+                        <stop offset="0%" stopColor="#C98A6E" stopOpacity={0.32} />
+                        <stop offset="100%" stopColor="#C98A6E" stopOpacity={0} />
                       </linearGradient>
                     </defs>
                     <XAxis dataKey="mes" tick={{ fill: ejeColor, fontSize: 12 }} axisLine={false} tickLine={false} />
                     <YAxis tick={{ fill: ejeColor, fontSize: 11 }} axisLine={false} tickLine={false} width={48}
                       tickFormatter={(v) => `${(v as number) / 1000}k`} />
                     <Tooltip contentStyle={tipStyle} formatter={(v) => fmtRD(Number(v))} />
-                    <Area type="monotone" dataKey="ingresos" stroke="#C45C7F" strokeWidth={2} fill="url(#gIng)" isAnimationActive={anim} name="Ingresos" />
-                    <Area type="monotone" dataKey="costos" stroke="#7A2444" strokeWidth={2} fill="url(#gCost)" isAnimationActive={anim} name="Costos" />
+                    <Area type="monotone" dataKey="ingresos" stroke="#A85F52" strokeWidth={2} fill="url(#gIng)" isAnimationActive={anim} name="Ingresos" />
+                    <Area type="monotone" dataKey="costos" stroke="#C98A6E" strokeWidth={2} fill="url(#gCost)" isAnimationActive={anim} name="Costos" />
                   </AreaChart>
                 </ResponsiveContainer>
               </div>
@@ -213,7 +213,7 @@ export function ReportesView() {
                     <XAxis dataKey="nombre" tick={{ fill: ejeColor, fontSize: 10 }} axisLine={false} tickLine={false} interval={0} />
                     <YAxis hide />
                     <Tooltip contentStyle={tipStyle} cursor={{ fill: gridColor }} />
-                    <Bar dataKey="uso" radius={[6, 6, 0, 0]} fill="#C45C7F" isAnimationActive={anim} />
+                    <Bar dataKey="uso" radius={[6, 6, 0, 0]} fill="#A85F52" isAnimationActive={anim} />
                   </BarChart>
                 </ResponsiveContainer>
               </div>

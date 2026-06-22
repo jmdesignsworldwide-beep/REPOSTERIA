@@ -46,5 +46,5 @@ export const ENTREGAS_RESUMEN = [
   { tipo: "Recoge en tienda", valor: 36 },
 ];
 
-// Paleta de marca — familia rosa (sin chocolate) para los gráficos.
-export const COLORES = ["#C45C7F", "#D4537E", "#993556", "#E59AB4", "#7A2444", "#F0B6CC"];
+// Paleta de marca — rosa empolvado apagado + caramelo apagado para los gráficos.
+export const COLORES = ["#A85F52", "#D4938A", "#C98A6E", "#E0A8A0", "#8A5A3C", "#F3DCD8"];

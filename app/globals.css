@@ -5,41 +5,41 @@
 /* ════════════ Azúcar & Canela · Sistema de diseño ════════════ */
 /* Colores en canales RGB para permitir transparencias (glass, aurora). */
 
-/* ───── Tema CLARO · crema rosada con rosa empolvado (sin chocolate) ───── */
+/* ───── Tema CLARO · crema base + rosa empolvado apagado (boutique) ───── */
 :root,
 [data-theme="light"] {
-  --background: 253 240 244; /* crema rosada #FDF0F4 (no beige) */
-  --surface: 255 253 254; /* casi blanco con tinte rosa (tarjetas elevadas) */
-  --foreground: 58 34 46; /* ciruela oscuro legible (familia rosa) */
-  --muted: 150 88 110; /* malva (rosa medio) para texto secundario */
-  --border: 240 212 223; /* borde rosa suave #F0D4DF */
-  --glass: 255 253 254;
-  --primary: 196 92 127; /* rosa empolvado #C45C7F */
-  --primary-foreground: 255 252 253;
-  --accent: 212 83 126; /* rosa vivo #D4537E */
-  --sidebar: 122 36 68; /* rosa profundo / vino #7A2444 */
-  --sidebar-foreground: 252 238 243; /* crema */
-  --aurora-1: 196 92 127;
-  --aurora-2: 212 83 126;
-  --aurora-3: 235 180 200;
+  --background: 251 245 239; /* crema cálida #FBF5EF */
+  --surface: 255 253 250; /* casi blanco cálido (tarjetas) #FFFDFA */
+  --foreground: 74 53 48; /* taupe oscuro legible (cálido, no marrón fuerte) */
+  --muted: 140 110 100; /* taupe rosado para texto secundario */
+  --border: 239 226 217; /* borde crema/rosa muy suave #EFE2D9 */
+  --glass: 255 253 250;
+  --primary: 168 95 82; /* rosa terracota apagado #A85F52 (legible y empolvado) */
+  --primary-foreground: 251 245 239;
+  --accent: 212 147 138; /* rosa empolvado vivo #D4938A */
+  --sidebar: 255 253 250;
+  --sidebar-foreground: 74 53 48;
+  --aurora-1: 224 168 160; /* rosa empolvado #E0A8A0 */
+  --aurora-2: 201 138 110; /* caramelo apagado #C98A6E */
+  --aurora-3: 243 220 216; /* rosa claro #F3DCD8 */
 }
 
-/* ───── Tema OSCURO · near-black cálido rosado con rosa empolvado claro ───── */
+/* ───── Tema OSCURO · near-black cálido rosado + rosa empolvado claro ───── */
 [data-theme="dark"] {
-  --background: 22 14 18; /* near-black con tinte rosado cálido */
-  --surface: 36 24 30;
-  --foreground: 246 235 240;
-  --muted: 190 158 172; /* malva claro */
-  --border: 66 48 57;
-  --glass: 38 25 31;
-  --primary: 224 122 156; /* rosa empolvado luminoso #E07A9C */
-  --primary-foreground: 26 14 19;
-  --accent: 232 155 179; /* rosa claro #E89BB3 */
-  --sidebar: 92 28 52; /* rosa vino profundo */
-  --sidebar-foreground: 246 235 240;
-  --aurora-1: 224 122 156;
-  --aurora-2: 200 92 127;
-  --aurora-3: 184 95 127;
+  --background: 28 24 21; /* near-black cálido #1C1815 */
+  --surface: 42 35 31;
+  --foreground: 245 236 230;
+  --muted: 188 162 152; /* taupe claro */
+  --border: 64 53 47;
+  --glass: 44 36 32;
+  --primary: 224 168 160; /* rosa empolvado claro #E0A8A0 (resalta en oscuro) */
+  --primary-foreground: 28 24 21;
+  --accent: 232 184 176; /* rosa claro #E8B8B0 */
+  --sidebar: 42 35 31;
+  --sidebar-foreground: 245 236 230;
+  --aurora-1: 224 168 160;
+  --aurora-2: 201 138 110;
+  --aurora-3: 184 120 110;
 }
 
 html {
