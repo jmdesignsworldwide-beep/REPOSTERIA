@@ -1,5 +1,4 @@
 import { createClient } from "@/lib/supabase/server";
-import { LoginCTA } from "@/components/ui/login-cta";
 import { CajaView } from "@/components/caja/caja-view";
 import type { Movimiento } from "@/lib/caja/types";
 
@@ -7,10 +6,6 @@ export const dynamic = "force-dynamic";
 
 export default async function CajaPage() {
   const supabase = await createClient();
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
-  if (!user) return <LoginCTA modulo="Caja" />;
 
   const { data } = await supabase
     .from("movimientos_caja")

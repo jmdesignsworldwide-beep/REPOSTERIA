@@ -1,5 +1,4 @@
 import { createClient } from "@/lib/supabase/server";
-import { LoginCTA } from "@/components/ui/login-cta";
 import { CalendarioView } from "@/components/calendario/calendario-view";
 import type { Pedido } from "@/lib/pedidos/types";
 
@@ -10,10 +9,6 @@ const SELECT =
 
 export default async function CalendarioPage() {
   const supabase = await createClient();
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
-  if (!user) return <LoginCTA modulo="Calendario" />;
 
   const { data } = await supabase
     .from("pedidos")

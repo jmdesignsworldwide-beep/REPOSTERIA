@@ -4,6 +4,7 @@ import { useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { createClient } from "@/lib/supabase/client";
+import { emailDeUsuario } from "@/lib/auth/usuario";
 import { ThemeToggle } from "@/components/theme-toggle";
 import { Stagger, StaggerItem } from "@/components/ui/stagger";
 import { Magnetic } from "@/components/ui/magnetic";
@@ -12,7 +13,7 @@ import { PostresDecor } from "@/components/decor/PostresDecor";
 
 export default function LoginPage() {
   const router = useRouter();
-  const [email, setEmail] = useState("");
+  const [usuario, setUsuario] = useState("");
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
   const [msg, setMsg] = useState<{ ok: boolean; text: string } | null>(null);
@@ -24,20 +25,21 @@ export default function LoginPage() {
     try {
       const supabase = createClient();
       const { data, error } = await supabase.auth.signInWithPassword({
-        email,
+        email: emailDeUsuario(usuario),
         password,
       });
       if (error) {
-        setMsg({ ok: false, text: error.message });
+        setMsg({ ok: false, text: "Usuario o contraseña incorrectos." });
         setLoading(false);
         return;
       }
-      // Prepara la bienvenida cinematográfica (una vez por sesión).
+      // Si la cuenta está vencida/inactiva, el middleware lo enviará a /expirado.
       try {
+        const meta = (data.user?.app_metadata ?? {}) as Record<string, unknown>;
         const nombre =
+          (typeof meta.username === "string" && meta.username) ||
           (data.user?.user_metadata?.name as string | undefined) ||
-          data.user?.email?.split("@")[0] ||
-          "";
+          usuario;
         sessionStorage.setItem("ac_welcome_name", nombre);
         sessionStorage.removeItem("ac_welcome_seen");
       } catch {}
@@ -45,7 +47,7 @@ export default function LoginPage() {
       router.refresh();
       router.push("/");
     } catch {
-      setMsg({ ok: false, text: "No se pudo conectar con Supabase." });
+      setMsg({ ok: false, text: "No se pudo conectar." });
       setLoading(false);
     }
   }
@@ -78,16 +80,18 @@ export default function LoginPage() {
 
               <form onSubmit={onSubmit} className="mt-6 space-y-4">
                 <StaggerItem className="space-y-1.5">
-                  <label htmlFor="email" className="text-sm font-medium">
-                    Correo
+                  <label htmlFor="usuario" className="text-sm font-medium">
+                    Usuario
                   </label>
                   <input
-                    id="email"
-                    type="email"
+                    id="usuario"
+                    type="text"
+                    autoCapitalize="none"
+                    autoComplete="username"
                     required
-                    value={email}
-                    onChange={(e) => setEmail(e.target.value)}
-                    placeholder="tu@correo.com"
+                    value={usuario}
+                    onChange={(e) => setUsuario(e.target.value)}
+                    placeholder="tu usuario"
                     className="w-full rounded-xl border border-foreground/15 bg-background/60 px-3 py-2.5 text-sm outline-none backdrop-blur transition-colors focus:border-primary"
                   />
                 </StaggerItem>
