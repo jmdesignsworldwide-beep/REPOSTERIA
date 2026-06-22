@@ -1,5 +1,6 @@
 "use client";
 
+import { AnimatePresence, motion } from "framer-motion";
 import { useTheme } from "./theme-provider";
 
 export function ThemeToggle() {
@@ -10,10 +11,19 @@ export function ThemeToggle() {
       type="button"
       onClick={toggle}
       aria-label="Cambiar tema"
-      className="inline-flex items-center gap-2 rounded-lg border border-border bg-surface px-3 py-1.5 text-sm font-medium transition-colors hover:bg-background"
+      className="relative inline-flex h-9 w-9 items-center justify-center overflow-hidden rounded-full border border-foreground/10 bg-glass/60 text-base backdrop-blur transition-colors hover:border-primary/40"
     >
-      {/* Hasta montar, texto neutro para evitar desajustes de hidratación */}
-      {!mounted ? "Tema" : theme === "dark" ? "🌙 Oscuro" : "☀️ Claro"}
+      <AnimatePresence mode="wait" initial={false}>
+        <motion.span
+          key={mounted ? theme : "placeholder"}
+          initial={{ y: 14, opacity: 0, rotate: -40 }}
+          animate={{ y: 0, opacity: 1, rotate: 0 }}
+          exit={{ y: -14, opacity: 0, rotate: 40 }}
+          transition={{ duration: 0.2 }}
+        >
+          {!mounted ? "•" : theme === "dark" ? "🌙" : "☀️"}
+        </motion.span>
+      </AnimatePresence>
     </button>
   );
 }
