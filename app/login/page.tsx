@@ -2,7 +2,6 @@
 
 import { useState } from "react";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
 import { createClient } from "@/lib/supabase/client";
 import { emailDeUsuario } from "@/lib/auth/usuario";
 import { ThemeToggle } from "@/components/theme-toggle";
@@ -12,7 +11,6 @@ import { GlassCard } from "@/components/ui/glass-card";
 import { PostresDecor } from "@/components/decor/PostresDecor";
 
 export default function LoginPage() {
-  const router = useRouter();
   const [usuario, setUsuario] = useState("");
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
@@ -44,8 +42,10 @@ export default function LoginPage() {
         sessionStorage.removeItem("ac_welcome_seen");
       } catch {}
       setMsg({ ok: true, text: "Sesión iniciada. Redirigiendo…" });
-      router.refresh();
-      router.push("/");
+      // Navegación COMPLETA: garantiza que el servidor (middleware) reciba la
+      // cookie de sesión recién creada en el primer request (evita el "hard
+      // refresh"). El flag de bienvenida en sessionStorage sobrevive la recarga.
+      window.location.assign("/");
     } catch {
       setMsg({ ok: false, text: "No se pudo conectar." });
       setLoading(false);

@@ -1,19 +1,16 @@
 "use client";
 
-import { useRouter } from "next/navigation";
 import { createClient } from "@/lib/supabase/client";
 import { GlassCard } from "@/components/ui/glass-card";
 import { ThemeToggle } from "@/components/theme-toggle";
 
 export default function ExpiradoPage() {
-  const router = useRouter();
-
   async function salir() {
     try {
       await createClient().auth.signOut();
     } catch {}
-    router.refresh();
-    router.push("/login");
+    // Navegación completa para que el servidor vea la sesión cerrada.
+    window.location.assign("/login");
   }
 
   return (
