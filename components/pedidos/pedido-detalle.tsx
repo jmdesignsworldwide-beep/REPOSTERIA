@@ -4,6 +4,7 @@ import { useState } from "react";
 import { fmtRD } from "@/lib/data/mock";
 import { ESTADOS, estadoMeta, abonadoDe, balanceDe } from "@/lib/pedidos/types";
 import type { EstadoPedido, Pedido } from "@/lib/pedidos/types";
+import { SignedImg } from "@/components/ui/signed-img";
 
 export function EstadoBadge({ estado }: { estado: EstadoPedido }) {
   const e = estadoMeta(estado);
@@ -72,20 +73,16 @@ export function PedidoDetalle({
         </div>
       )}
 
-      {/* Fotos */}
+      {/* Fotos (bucket privado → URL firmada) */}
       {pedido.fotos.length > 0 && (
         <div className="flex flex-wrap gap-2">
-          {pedido.fotos.map((url) => (
-            <a
-              key={url}
-              href={url}
-              target="_blank"
-              rel="noreferrer"
+          {pedido.fotos.map((path) => (
+            <div
+              key={path}
               className="h-24 w-24 overflow-hidden rounded-xl border border-foreground/10"
             >
-              {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img src={url} alt="Referencia" className="h-full w-full object-cover" />
-            </a>
+              <SignedImg src={path} alt="Referencia" className="h-full w-full object-cover" />
+            </div>
           ))}
         </div>
       )}

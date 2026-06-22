@@ -2,18 +2,19 @@
 
 import { useRef, useState } from "react";
 import { createClient } from "@/lib/supabase/client";
+import { SignedImg } from "@/components/ui/signed-img";
 
 /**
- * Subida REAL de fotos a Supabase Storage (bucket público "referencias").
- * Devuelve las URL públicas en onChange. Los botones sobre las fotos llevan
- * fondo sólido + sombra para que se vean sobre cualquier imagen.
+ * Subida REAL de fotos a Supabase Storage (bucket PRIVADO "referencias").
+ * Guarda la RUTA del archivo (no una URL pública); las fotos se muestran con
+ * URL firmada temporal. Los botones sobre las fotos llevan fondo sólido.
  */
 export function PhotoUpload({
   value,
   onChange,
 }: {
   value: string[];
-  onChange: (urls: string[]) => void;
+  onChange: (paths: string[]) => void;
 }) {
   const inputRef = useRef<HTMLInputElement>(null);
   const [subiendo, setSubiendo] = useState(false);
@@ -37,10 +38,7 @@ export function PhotoUpload({
           setError(upErr.message);
           continue;
         }
-        const { data } = supabase.storage
-          .from("referencias")
-          .getPublicUrl(path);
-        nuevas.push(data.publicUrl);
+        nuevas.push(path); // guardamos la ruta, no una URL pública
       }
       if (nuevas.length) onChange([...value, ...nuevas]);
     } finally {
@@ -49,27 +47,22 @@ export function PhotoUpload({
     }
   }
 
-  function remove(url: string) {
-    onChange(value.filter((u) => u !== url));
+  function remove(path: string) {
+    onChange(value.filter((u) => u !== path));
   }
 
   return (
     <div className="space-y-2">
       <div className="flex flex-wrap gap-2">
-        {value.map((url) => (
+        {value.map((path) => (
           <div
-            key={url}
+            key={path}
             className="relative h-20 w-20 overflow-hidden rounded-xl border border-foreground/10"
           >
-            {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img
-              src={url}
-              alt="Referencia"
-              className="h-full w-full object-cover"
-            />
+            <SignedImg src={path} alt="Referencia" className="h-full w-full object-cover" />
             <button
               type="button"
-              onClick={() => remove(url)}
+              onClick={() => remove(path)}
               aria-label="Quitar foto"
               className="absolute right-1 top-1 inline-flex h-6 w-6 items-center justify-center rounded-full bg-black/70 text-xs text-white shadow-md"
             >
