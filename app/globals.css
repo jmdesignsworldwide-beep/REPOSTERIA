@@ -5,37 +5,41 @@
 /* ════════════ Azúcar & Canela · Sistema de diseño ════════════ */
 /* Colores en canales RGB para permitir transparencias (glass, aurora). */
 
-/* ───── Tema CLARO · crema con rosa empolvado + chocolate ───── */
+/* ───── Tema CLARO · crema rosada con rosa empolvado (sin chocolate) ───── */
 :root,
 [data-theme="light"] {
-  --background: 245 237 228; /* crema un punto mas profunda (para que las tarjetas resalten) */
-  --surface: 255 252 248; /* crema casi blanca (tarjetas elevadas) */
-  --foreground: 58 42 34; /* chocolate oscuro legible */
-  --muted: 140 110 96; /* chocolate suave */
-  --border: 228 215 202; /* borde chocolate suave definido */
-  --glass: 255 252 248;
+  --background: 253 240 244; /* crema rosada #FDF0F4 (no beige) */
+  --surface: 255 253 254; /* casi blanco con tinte rosa (tarjetas elevadas) */
+  --foreground: 58 34 46; /* ciruela oscuro legible (familia rosa) */
+  --muted: 150 88 110; /* malva (rosa medio) para texto secundario */
+  --border: 240 212 223; /* borde rosa suave #F0D4DF */
+  --glass: 255 253 254;
   --primary: 196 92 127; /* rosa empolvado #C45C7F */
-  --primary-foreground: 253 248 241;
+  --primary-foreground: 255 252 253;
   --accent: 212 83 126; /* rosa vivo #D4537E */
-  --aurora-1: 196 92 127; /* rosa */
-  --aurora-2: 168 124 92; /* chocolate #A87C5C */
-  --aurora-3: 235 180 200; /* rosa suave */
+  --sidebar: 122 36 68; /* rosa profundo / vino #7A2444 */
+  --sidebar-foreground: 252 238 243; /* crema */
+  --aurora-1: 196 92 127;
+  --aurora-2: 212 83 126;
+  --aurora-3: 235 180 200;
 }
 
-/* ───── Tema OSCURO · near-black cálido con rosa empolvado ───── */
+/* ───── Tema OSCURO · near-black cálido rosado con rosa empolvado claro ───── */
 [data-theme="dark"] {
-  --background: 18 13 12;
-  --surface: 30 23 21;
-  --foreground: 245 237 230;
-  --muted: 173 156 145;
-  --border: 60 49 44;
-  --glass: 32 24 22;
-  --primary: 224 122 156; /* rosa empolvado luminoso para fondo oscuro */
-  --primary-foreground: 22 14 14;
-  --accent: 233 142 170; /* rosa vivo claro */
-  --aurora-1: 224 122 156; /* rosa */
-  --aurora-2: 156 107 74; /* chocolate */
-  --aurora-3: 184 95 127; /* rosa profundo */
+  --background: 22 14 18; /* near-black con tinte rosado cálido */
+  --surface: 36 24 30;
+  --foreground: 246 235 240;
+  --muted: 190 158 172; /* malva claro */
+  --border: 66 48 57;
+  --glass: 38 25 31;
+  --primary: 224 122 156; /* rosa empolvado luminoso #E07A9C */
+  --primary-foreground: 26 14 19;
+  --accent: 232 155 179; /* rosa claro #E89BB3 */
+  --sidebar: 92 28 52; /* rosa vino profundo */
+  --sidebar-foreground: 246 235 240;
+  --aurora-1: 224 122 156;
+  --aurora-2: 200 92 127;
+  --aurora-3: 184 95 127;
 }
 
 html {

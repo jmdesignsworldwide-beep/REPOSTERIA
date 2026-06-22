@@ -18,6 +18,8 @@ const config: Config = {
         border: rgb("--border"),
         glass: rgb("--glass"),
         accent: rgb("--accent"),
+        sidebar: rgb("--sidebar"),
+        "sidebar-foreground": rgb("--sidebar-foreground"),
         primary: {
           DEFAULT: rgb("--primary"),
           foreground: rgb("--primary-foreground"),

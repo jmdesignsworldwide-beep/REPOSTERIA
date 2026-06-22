@@ -99,8 +99,8 @@ export function ReportesView() {
                         <stop offset="100%" stopColor="#C45C7F" stopOpacity={0} />
                       </linearGradient>
                       <linearGradient id="gCost" x1="0" y1="0" x2="0" y2="1">
-                        <stop offset="0%" stopColor="#A87C5C" stopOpacity={0.35} />
-                        <stop offset="100%" stopColor="#A87C5C" stopOpacity={0} />
+                        <stop offset="0%" stopColor="#7A2444" stopOpacity={0.35} />
+                        <stop offset="100%" stopColor="#7A2444" stopOpacity={0} />
                       </linearGradient>
                     </defs>
                     <XAxis dataKey="mes" tick={{ fill: ejeColor, fontSize: 12 }} axisLine={false} tickLine={false} />
@@ -108,7 +108,7 @@ export function ReportesView() {
                       tickFormatter={(v) => `${(v as number) / 1000}k`} />
                     <Tooltip contentStyle={tipStyle} formatter={(v) => fmtRD(Number(v))} />
                     <Area type="monotone" dataKey="ingresos" stroke="#C45C7F" strokeWidth={2} fill="url(#gIng)" isAnimationActive={anim} name="Ingresos" />
-                    <Area type="monotone" dataKey="costos" stroke="#A87C5C" strokeWidth={2} fill="url(#gCost)" isAnimationActive={anim} name="Costos" />
+                    <Area type="monotone" dataKey="costos" stroke="#7A2444" strokeWidth={2} fill="url(#gCost)" isAnimationActive={anim} name="Costos" />
                   </AreaChart>
                 </ResponsiveContainer>
               </div>

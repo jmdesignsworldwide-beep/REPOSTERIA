@@ -12,8 +12,8 @@ const TONOS = [
   "from-rose-200 to-pink-300",
   "from-pink-200 to-rose-300",
   "from-rose-100 to-pink-200",
-  "from-stone-200 to-rose-200",
-  "from-rose-300 to-fuchsia-200",
+  "from-pink-100 to-rose-200",
+  "from-rose-300 to-pink-200",
 ];
 
 function Foto({ p, className }: { p: Producto; className?: string }) {
