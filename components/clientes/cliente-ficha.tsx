@@ -1,7 +1,12 @@
 "use client";
 
-import { fmtRD, getPedidosPorCliente } from "@/lib/data/mock";
+import { useEffect, useState } from "react";
+import { fmtRD } from "@/lib/data/mock";
+import { Skeleton } from "@/components/ui/skeleton";
+import { EstadoBadge } from "@/components/pedidos/pedido-detalle";
+import { getPedidosDeCliente } from "@/app/(app)/pedidos/actions";
 import type { Cliente } from "@/lib/clientes/types";
+import type { Pedido } from "@/lib/pedidos/types";
 
 function Chip({ children }: { children: React.ReactNode }) {
   return (
@@ -15,7 +20,6 @@ function diasHasta(fecha: string): number | null {
   const hoy = new Date();
   const f = new Date(fecha);
   if (isNaN(f.getTime())) return null;
-  // Próxima ocurrencia este año (o el próximo si ya pasó).
   const prox = new Date(hoy.getFullYear(), f.getMonth(), f.getDate());
   if (prox < new Date(hoy.getFullYear(), hoy.getMonth(), hoy.getDate())) {
     prox.setFullYear(hoy.getFullYear() + 1);
@@ -24,9 +28,20 @@ function diasHasta(fecha: string): number | null {
 }
 
 export function ClienteFicha({ cliente }: { cliente: Cliente }) {
-  const pedidos = getPedidosPorCliente(cliente.nombre);
-  const total = pedidos.reduce((s, p) => s + p.monto, 0);
-  const abonado = pedidos.reduce((s, p) => s + p.abono, 0);
+  const [pedidos, setPedidos] = useState<Pedido[] | null>(null);
+
+  useEffect(() => {
+    let activo = true;
+    getPedidosDeCliente(cliente.id).then((p) => {
+      if (activo) setPedidos(p);
+    });
+    return () => {
+      activo = false;
+    };
+  }, [cliente.id]);
+
+  const total = (pedidos ?? []).reduce((s, p) => s + Number(p.total), 0);
+  const abonado = (pedidos ?? []).reduce((s, p) => s + Number(p.adelanto), 0);
   const balance = total - abonado;
 
   return (
@@ -106,35 +121,41 @@ export function ClienteFicha({ cliente }: { cliente: Cliente }) {
         </div>
       )}
 
-      {/* Balance */}
+      {/* Balance (real) */}
       <div className="grid grid-cols-3 gap-2 text-center">
         <div className="rounded-xl border border-foreground/10 bg-foreground/[0.03] p-3">
           <p className="text-xs text-muted">Pedidos</p>
-          <p className="tabular-nums font-semibold">{pedidos.length}</p>
+          <p className="tabular-nums font-semibold">
+            {pedidos === null ? "…" : pedidos.length}
+          </p>
         </div>
         <div className="rounded-xl border border-foreground/10 bg-foreground/[0.03] p-3">
           <p className="text-xs text-muted">Adelantos</p>
           <p className="tabular-nums font-semibold text-emerald-600 dark:text-emerald-400">
-            {fmtRD(abonado)}
+            {pedidos === null ? "…" : fmtRD(abonado)}
           </p>
         </div>
         <div className="rounded-xl border border-foreground/10 bg-foreground/[0.03] p-3">
           <p className="text-xs text-muted">Balance</p>
           <p className="tabular-nums font-semibold text-primary">
-            {fmtRD(balance)}
+            {pedidos === null ? "…" : fmtRD(balance)}
           </p>
         </div>
       </div>
 
-      {/* Historial de pedidos (mock → Tanda 4) */}
+      {/* Historial real de pedidos */}
       <div>
         <p className="mb-2 text-xs font-medium text-muted">
           Historial de pedidos
         </p>
-        {pedidos.length === 0 ? (
+        {pedidos === null ? (
+          <div className="space-y-2">
+            <Skeleton className="h-10 w-full" />
+            <Skeleton className="h-10 w-full" />
+          </div>
+        ) : pedidos.length === 0 ? (
           <p className="rounded-xl border border-foreground/10 bg-foreground/[0.03] p-3 text-sm text-muted">
-            Aún no tiene pedidos. Se conectará con el módulo de Pedidos (Tanda
-            4).
+            Aún no tiene pedidos. Crea uno en el módulo de Pedidos.
           </p>
         ) : (
           <div className="space-y-1.5">
@@ -143,12 +164,15 @@ export function ClienteFicha({ cliente }: { cliente: Cliente }) {
                 key={p.id}
                 className="flex items-center justify-between rounded-lg border border-foreground/5 bg-foreground/[0.03] px-3 py-2 text-sm"
               >
-                <span>
-                  {p.codigo} · {p.producto} ({p.sabor})
+                <span className="min-w-0 truncate">
+                  #{p.numero} · {p.items[0]?.producto ?? p.descripcion ?? "Pedido"}
                 </span>
-                <span className="tabular-nums font-medium">
-                  {fmtRD(p.monto)}
-                </span>
+                <div className="flex shrink-0 items-center gap-2">
+                  <EstadoBadge estado={p.estado} />
+                  <span className="tabular-nums font-medium">
+                    {fmtRD(Number(p.total))}
+                  </span>
+                </div>
               </div>
             ))}
           </div>
