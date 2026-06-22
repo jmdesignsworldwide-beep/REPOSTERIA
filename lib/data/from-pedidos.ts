@@ -8,7 +8,7 @@ import type {
   EstadoPedido as MockEstado,
   Pedido as MockPedido,
 } from "./types";
-import type { Pedido as RealPedido } from "@/lib/pedidos/types";
+import { abonadoDe, type Pedido as RealPedido } from "@/lib/pedidos/types";
 
 function mapEstado(e: RealPedido["estado"]): MockEstado {
   return e === "en_proceso" ? "en_produccion" : (e as MockEstado);
@@ -25,7 +25,7 @@ function toMockPedido(p: RealPedido): MockPedido {
     ocasion: p.ocasion ?? "",
     cantidad: p.items.reduce((s, i) => s + i.cantidad, 0),
     monto: Number(p.total),
-    abono: Number(p.adelanto),
+    abono: abonadoDe(p),
     estado: mapEstado(p.estado),
     horaEntrega: p.hora_entrega ?? "",
     notas: p.notas ?? undefined,

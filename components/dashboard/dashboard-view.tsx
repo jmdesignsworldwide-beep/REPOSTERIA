@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import Link from "next/link";
 import { Stagger, StaggerItem } from "@/components/ui/stagger";
 import { Magnetic } from "@/components/ui/magnetic";
 import { CountUp } from "@/components/ui/count-up";
@@ -40,9 +41,11 @@ type ModalState =
 export function DashboardView({
   data,
   isReal,
+  cajaHref,
 }: {
   data: DashboardData;
   isReal: boolean;
+  cajaHref?: string;
 }) {
   const [modal, setModal] = useState<ModalState>(null);
   const [saludo, setSaludo] = useState("Hola");
@@ -167,38 +170,50 @@ export function DashboardView({
         </StaggerItem>
 
         <div className="grid grid-cols-2 gap-4 lg:grid-cols-4">
-          {kpis.map((k) => (
-            <StaggerItem key={k.label}>
-              <Magnetic>
-                <button
-                  onClick={() =>
-                    setModal({
-                      type: "kpi",
-                      titulo: k.label,
-                      valor:
-                        k.prefix === "RD$ "
-                          ? fmtRD(k.value)
-                          : String(k.value),
-                      render: k.render,
-                    })
-                  }
-                  className="w-full text-left"
-                  aria-label={`Ver detalle de ${k.label}`}
-                >
-                  <GlassCard className="p-5">
-                    <div className="flex items-center justify-between">
-                      <p className="text-xs font-medium text-muted">{k.label}</p>
-                      {k.live && <LiveDot className="text-primary" />}
-                    </div>
-                    <p className="mt-2 font-display text-2xl font-bold sm:text-3xl">
-                      <CountUp value={k.value} prefix={k.prefix} />
-                    </p>
-                    <p className="mt-1 text-xs text-muted">Ver detalle →</p>
-                  </GlassCard>
-                </button>
-              </Magnetic>
-            </StaggerItem>
-          ))}
+          {kpis.map((k) => {
+            const esCaja = k.label === "Caja del día" && cajaHref;
+            const card = (
+              <GlassCard className="p-5">
+                <div className="flex items-center justify-between">
+                  <p className="text-xs font-medium text-muted">{k.label}</p>
+                  {k.live && <LiveDot className="text-primary" />}
+                </div>
+                <p className="mt-2 font-display text-2xl font-bold sm:text-3xl">
+                  <CountUp value={k.value} prefix={k.prefix} />
+                </p>
+                <p className="mt-1 text-xs text-muted">
+                  {esCaja ? "Ir a la caja →" : "Ver detalle →"}
+                </p>
+              </GlassCard>
+            );
+            return (
+              <StaggerItem key={k.label}>
+                <Magnetic>
+                  {esCaja ? (
+                    <Link href={cajaHref!} className="block" aria-label="Ir a la caja">
+                      {card}
+                    </Link>
+                  ) : (
+                    <button
+                      onClick={() =>
+                        setModal({
+                          type: "kpi",
+                          titulo: k.label,
+                          valor:
+                            k.prefix === "RD$ " ? fmtRD(k.value) : String(k.value),
+                          render: k.render,
+                        })
+                      }
+                      className="w-full text-left"
+                      aria-label={`Ver detalle de ${k.label}`}
+                    >
+                      {card}
+                    </button>
+                  )}
+                </Magnetic>
+              </StaggerItem>
+            );
+          })}
         </div>
 
         <div className="grid gap-6 lg:grid-cols-3">

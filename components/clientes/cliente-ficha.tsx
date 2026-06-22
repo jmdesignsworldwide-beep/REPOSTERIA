@@ -6,7 +6,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { EstadoBadge } from "@/components/pedidos/pedido-detalle";
 import { getPedidosDeCliente } from "@/app/(app)/pedidos/actions";
 import type { Cliente } from "@/lib/clientes/types";
-import type { Pedido } from "@/lib/pedidos/types";
+import { abonadoDe, type Pedido } from "@/lib/pedidos/types";
 
 function Chip({ children }: { children: React.ReactNode }) {
   return (
@@ -41,7 +41,7 @@ export function ClienteFicha({ cliente }: { cliente: Cliente }) {
   }, [cliente.id]);
 
   const total = (pedidos ?? []).reduce((s, p) => s + Number(p.total), 0);
-  const abonado = (pedidos ?? []).reduce((s, p) => s + Number(p.adelanto), 0);
+  const abonado = (pedidos ?? []).reduce((s, p) => s + abonadoDe(p), 0);
   const balance = total - abonado;
 
   return (

@@ -6,7 +6,7 @@ import type { Pedido } from "@/lib/pedidos/types";
 export const dynamic = "force-dynamic";
 
 const SELECT =
-  "*, cliente:clientes(id,nombre,telefono,direccion), items:pedido_items(id,producto,tamano,sabor,cantidad,precio,orden)";
+  "*, cliente:clientes(id,nombre,telefono,direccion), items:pedido_items(id,producto,tamano,sabor,cantidad,precio,orden), pagos:movimientos_caja(monto,anulado,tipo)";
 
 export default async function CalendarioPage() {
   const supabase = await createClient();

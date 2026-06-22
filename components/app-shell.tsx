@@ -10,6 +10,7 @@ const NAV = [
   { label: "Pedidos", icon: "🧾", href: "/pedidos" },
   { label: "Calendario", icon: "📅", href: "/calendario" },
   { label: "Clientes", icon: "👥", href: "/clientes" },
+  { label: "Caja", icon: "💵", href: "/caja" },
   { label: "Ajustes", icon: "⚙️", href: "#" },
 ];
 

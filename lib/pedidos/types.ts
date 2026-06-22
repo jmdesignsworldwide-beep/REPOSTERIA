@@ -20,6 +20,12 @@ export interface ClienteRef {
   direccion: string | null;
 }
 
+export interface PagoRef {
+  monto: number;
+  anulado: boolean;
+  tipo: string;
+}
+
 export interface Pedido {
   id: string;
   numero: number;
@@ -38,6 +44,18 @@ export interface Pedido {
   updated_at: string;
   cliente: ClienteRef | null;
   items: PedidoItem[];
+  pagos?: PagoRef[];
+}
+
+/** Abonado REAL = suma de ingresos de caja enlazados, no anulados (un solo origen). */
+export function abonadoDe(p: Pedido): number {
+  return (p.pagos ?? [])
+    .filter((x) => !x.anulado && x.tipo === "ingreso")
+    .reduce((s, x) => s + Number(x.monto), 0);
+}
+
+export function balanceDe(p: Pedido): number {
+  return Number(p.total) - abonadoDe(p);
 }
 
 export type PedidoInput = {

@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { fmtRD } from "@/lib/data/mock";
-import { ESTADOS, estadoMeta } from "@/lib/pedidos/types";
+import { ESTADOS, estadoMeta, abonadoDe, balanceDe } from "@/lib/pedidos/types";
 import type { EstadoPedido, Pedido } from "@/lib/pedidos/types";
 
 export function EstadoBadge({ estado }: { estado: EstadoPedido }) {
@@ -17,12 +17,15 @@ export function EstadoBadge({ estado }: { estado: EstadoPedido }) {
 export function PedidoDetalle({
   pedido,
   onEstadoChange,
+  onCobrar,
 }: {
   pedido: Pedido;
   onEstadoChange?: (estado: EstadoPedido) => Promise<void> | void;
+  onCobrar?: () => void;
 }) {
   const [cambiando, setCambiando] = useState<EstadoPedido | null>(null);
-  const balance = pedido.total - pedido.adelanto;
+  const abonado = abonadoDe(pedido);
+  const balance = balanceDe(pedido);
 
   async function cambiar(e: EstadoPedido) {
     if (!onEstadoChange || e === pedido.estado) return;
@@ -116,9 +119,9 @@ export function PedidoDetalle({
           <p className="tabular-nums font-semibold">{fmtRD(pedido.total)}</p>
         </div>
         <div className="rounded-xl border border-foreground/10 bg-foreground/[0.03] p-3">
-          <p className="text-xs text-muted">Adelanto</p>
+          <p className="text-xs text-muted">Abonado</p>
           <p className="tabular-nums font-semibold text-emerald-600 dark:text-emerald-400">
-            {fmtRD(pedido.adelanto)}
+            {fmtRD(abonado)}
           </p>
         </div>
         <div className="rounded-xl border border-foreground/10 bg-foreground/[0.03] p-3">
@@ -128,6 +131,17 @@ export function PedidoDetalle({
           </p>
         </div>
       </div>
+
+      {/* Cobrar pago → entra a la caja */}
+      {onCobrar && balance > 0 && (
+        <button
+          type="button"
+          onClick={onCobrar}
+          className="w-full rounded-xl border border-emerald-500/30 bg-emerald-500/10 px-4 py-2.5 text-sm font-semibold text-emerald-700 dark:text-emerald-400"
+        >
+          💵 Cobrar pago ({fmtRD(balance)})
+        </button>
+      )}
 
       {/* Notas */}
       {pedido.notas && (

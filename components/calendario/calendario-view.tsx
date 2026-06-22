@@ -8,6 +8,7 @@ import { GlassCard } from "@/components/ui/glass-card";
 import { Modal } from "@/components/ui/modal";
 import { LiveDot } from "@/components/ui/live-dot";
 import { PedidoDetalle, EstadoBadge } from "@/components/pedidos/pedido-detalle";
+import { CobrarPagoForm } from "@/components/pedidos/cobrar-pago";
 import { cambiarEstadoPedido } from "@/app/(app)/pedidos/actions";
 import type { EstadoPedido, Pedido } from "@/lib/pedidos/types";
 
@@ -26,6 +27,7 @@ export function CalendarioView({ initial }: { initial: Pedido[] }) {
   const [year, setYear] = useState(hoy.getFullYear());
   const [month, setMonth] = useState(hoy.getMonth());
   const [pedido, setPedido] = useState<Pedido | null>(null);
+  const [cobrar, setCobrar] = useState<Pedido | null>(null);
   const [, startTransition] = useTransition();
 
   const porDia = useMemo(() => {
@@ -243,6 +245,26 @@ export function CalendarioView({ initial }: { initial: Pedido[] }) {
           <PedidoDetalle
             pedido={pedido}
             onEstadoChange={(estado) => cambiarEstado(pedido, estado)}
+            onCobrar={() => setCobrar(pedido)}
+          />
+        )}
+      </Modal>
+
+      {/* Cobrar pago */}
+      <Modal
+        open={cobrar !== null}
+        onClose={() => setCobrar(null)}
+        title="Cobrar pago"
+        subtitle={cobrar ? `Pedido #${cobrar.numero}` : undefined}
+      >
+        {cobrar && (
+          <CobrarPagoForm
+            pedido={cobrar}
+            onDone={() => {
+              setCobrar(null);
+              setPedido(null);
+              router.refresh();
+            }}
           />
         )}
       </Modal>

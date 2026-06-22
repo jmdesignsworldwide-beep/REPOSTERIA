@@ -12,6 +12,7 @@ import type { EstadoPedido, Pedido, PedidoInput } from "@/lib/pedidos/types";
 import type { Cliente } from "@/lib/clientes/types";
 import { PedidoForm } from "./pedido-form";
 import { EstadoBadge, PedidoDetalle } from "./pedido-detalle";
+import { CobrarPagoForm } from "./cobrar-pago";
 import {
   actualizarPedido,
   cambiarActivoPedido,
@@ -26,6 +27,7 @@ type ModalState =
   | { type: "editar"; pedido: Pedido }
   | { type: "detalle"; pedido: Pedido }
   | { type: "confirmar"; pedido: Pedido }
+  | { type: "cobrar"; pedido: Pedido }
   | null;
 
 export function PedidosView({
@@ -283,6 +285,25 @@ export function PedidosView({
           <PedidoDetalle
             pedido={modal.pedido}
             onEstadoChange={(estado) => cambiarEstado(modal.pedido, estado)}
+            onCobrar={() => setModal({ type: "cobrar", pedido: modal.pedido })}
+          />
+        )}
+      </Modal>
+
+      {/* Cobrar pago */}
+      <Modal
+        open={modal?.type === "cobrar"}
+        onClose={() => setModal(null)}
+        title="Cobrar pago"
+        subtitle={modal?.type === "cobrar" ? `Pedido #${modal.pedido.numero}` : undefined}
+      >
+        {modal?.type === "cobrar" && (
+          <CobrarPagoForm
+            pedido={modal.pedido}
+            onDone={() => {
+              setModal(null);
+              refrescar();
+            }}
           />
         )}
       </Modal>

@@ -7,7 +7,7 @@ import type { Pedido, PedidoInput } from "@/lib/pedidos/types";
 type Result = { ok: true; id?: string } | { ok: false; error: string };
 
 const SELECT =
-  "*, cliente:clientes(id,nombre,telefono,direccion), items:pedido_items(id,producto,tamano,sabor,cantidad,precio,orden)";
+  "*, cliente:clientes(id,nombre,telefono,direccion), items:pedido_items(id,producto,tamano,sabor,cantidad,precio,orden), pagos:movimientos_caja(monto,anulado,tipo)";
 
 async function requireUser() {
   const supabase = await createClient();
@@ -71,11 +71,11 @@ export async function crearPedido(input: PedidoInput): Promise<Result> {
       hora_entrega: input.hora_entrega?.trim() || null,
       estado: input.estado,
       total: calcTotal(input),
-      adelanto: input.adelanto,
+      adelanto: 0,
       notas: input.notas?.trim() || null,
       fotos: input.fotos,
     })
-    .select("id")
+    .select("id, numero")
     .single();
 
   if (error || !data) return { ok: false, error: error?.message ?? "Error" };
@@ -83,10 +83,23 @@ export async function crearPedido(input: PedidoInput): Promise<Result> {
   const itemsRes = await guardarItems(supabase, data.id, input);
   if (itemsRes.error) return { ok: false, error: itemsRes.error.message };
 
+  // Abono inicial → ingreso de caja enlazado (un solo origen para el dinero).
+  if (input.adelanto > 0) {
+    await supabase.from("movimientos_caja").insert({
+      tipo: "ingreso",
+      monto: input.adelanto,
+      concepto: `Abono inicial pedido #${data.numero}`,
+      categoria: "pago_pedido",
+      metodo: "efectivo",
+      pedido_id: data.id,
+    });
+  }
+
   revalidatePath("/pedidos");
   revalidatePath("/calendario");
   revalidatePath("/");
   revalidatePath("/clientes");
+  revalidatePath("/caja");
   return { ok: true, id: data.id };
 }
 
@@ -109,7 +122,6 @@ export async function actualizarPedido(
       hora_entrega: input.hora_entrega?.trim() || null,
       estado: input.estado,
       total: calcTotal(input),
-      adelanto: input.adelanto,
       notas: input.notas?.trim() || null,
       fotos: input.fotos,
     })

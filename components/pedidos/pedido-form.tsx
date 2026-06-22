@@ -4,7 +4,7 @@ import { useMemo, useState } from "react";
 import { fmtRD } from "@/lib/data/mock";
 import { PhotoUpload } from "./photo-upload";
 import type { EstadoPedido, Pedido, PedidoInput, PedidoItem } from "@/lib/pedidos/types";
-import { ESTADOS } from "@/lib/pedidos/types";
+import { ESTADOS, abonadoDe } from "@/lib/pedidos/types";
 import type { Cliente } from "@/lib/clientes/types";
 
 const inputCls =
@@ -47,7 +47,9 @@ export function PedidoForm({
     () => items.reduce((s, i) => s + i.cantidad * i.precio, 0),
     [items],
   );
-  const balance = total - adelanto;
+  // En edición, lo abonado se deriva de la caja (pagos reales).
+  const abonado = pedido ? abonadoDe(pedido) : adelanto;
+  const balance = total - abonado;
 
   function updateItem(i: number, patch: Partial<PedidoItem>) {
     setItems((arr) => arr.map((x, idx) => (idx === i ? { ...x, ...patch } : x)));
@@ -210,7 +212,7 @@ export function PedidoForm({
         </label>
       </div>
 
-      {/* Ocasión / adelanto */}
+      {/* Ocasión / abono inicial (solo al crear) */}
       <div className="grid grid-cols-2 gap-3">
         <label className="block space-y-1.5">
           <span className="text-sm font-medium">Ocasión</span>
@@ -221,17 +223,19 @@ export function PedidoForm({
             onChange={(e) => setOcasion(e.target.value)}
           />
         </label>
-        <label className="block space-y-1.5">
-          <span className="text-sm font-medium">Adelanto (RD$)</span>
-          <input
-            type="number"
-            min={0}
-            step="0.01"
-            className={inputCls}
-            value={adelanto}
-            onChange={(e) => setAdelanto(Number(e.target.value) || 0)}
-          />
-        </label>
+        {!pedido && (
+          <label className="block space-y-1.5">
+            <span className="text-sm font-medium">Abono inicial (RD$)</span>
+            <input
+              type="number"
+              min={0}
+              step="0.01"
+              className={inputCls}
+              value={adelanto}
+              onChange={(e) => setAdelanto(Number(e.target.value) || 0)}
+            />
+          </label>
+        )}
       </div>
 
       {/* Totales */}
@@ -241,9 +245,9 @@ export function PedidoForm({
           <p className="tabular-nums font-semibold">{fmtRD(total)}</p>
         </div>
         <div className="rounded-xl border border-foreground/10 bg-foreground/[0.03] p-2.5">
-          <p className="text-xs text-muted">Adelanto</p>
+          <p className="text-xs text-muted">{pedido ? "Abonado" : "Abono inicial"}</p>
           <p className="tabular-nums font-semibold text-emerald-600 dark:text-emerald-400">
-            {fmtRD(adelanto)}
+            {fmtRD(abonado)}
           </p>
         </div>
         <div className="rounded-xl border border-foreground/10 bg-foreground/[0.03] p-2.5">
@@ -253,6 +257,12 @@ export function PedidoForm({
           </p>
         </div>
       </div>
+      {pedido && (
+        <p className="-mt-2 text-xs text-muted">
+          Los pagos se registran desde el detalle del pedido (Cobrar pago) y van
+          a la caja.
+        </p>
+      )}
 
       {/* Fotos */}
       <div className="space-y-1.5">
