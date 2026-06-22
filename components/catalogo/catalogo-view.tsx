@@ -9,11 +9,11 @@ import { CATEGORIAS_CAT, PRODUCTOS, rangoPrecio } from "@/lib/data/catalogo";
 import type { Producto } from "@/lib/data/catalogo";
 
 const TONOS = [
-  "from-amber-200 to-orange-300",
-  "from-rose-200 to-amber-200",
-  "from-orange-200 to-pink-200",
-  "from-yellow-200 to-orange-200",
-  "from-amber-300 to-rose-300",
+  "from-rose-200 to-pink-300",
+  "from-pink-200 to-rose-300",
+  "from-rose-100 to-pink-200",
+  "from-stone-200 to-rose-200",
+  "from-rose-300 to-fuchsia-200",
 ];
 
 function Foto({ p, className }: { p: Producto; className?: string }) {

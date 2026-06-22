@@ -5,37 +5,37 @@
 /* ════════════ Azúcar & Canela · Sistema de diseño ════════════ */
 /* Colores en canales RGB para permitir transparencias (glass, aurora). */
 
-/* ───── Tema CLARO · crema cálido elegante ───── */
+/* ───── Tema CLARO · crema con rosa empolvado + chocolate ───── */
 :root,
 [data-theme="light"] {
-  --background: 250 243 233;
-  --surface: 255 250 244;
-  --foreground: 43 31 24;
-  --muted: 124 104 90;
-  --border: 232 217 200;
-  --glass: 255 250 244;
-  --primary: 176 104 52; /* caramelo / cobre */
-  --primary-foreground: 255 250 244;
-  --accent: 209 152 96; /* caramelo claro */
-  --aurora-1: 209 152 96;
-  --aurora-2: 176 104 52;
-  --aurora-3: 224 186 142;
+  --background: 250 243 236; /* crema #FAF3EC */
+  --surface: 253 248 241; /* crema #FDF8F1 */
+  --foreground: 58 42 34; /* chocolate oscuro legible */
+  --muted: 140 110 96; /* chocolate suave */
+  --border: 221 205 191; /* borde chocolate suave #DDCDBF */
+  --glass: 253 248 241;
+  --primary: 196 92 127; /* rosa empolvado #C45C7F */
+  --primary-foreground: 253 248 241;
+  --accent: 212 83 126; /* rosa vivo #D4537E */
+  --aurora-1: 196 92 127; /* rosa */
+  --aurora-2: 168 124 92; /* chocolate #A87C5C */
+  --aurora-3: 235 180 200; /* rosa suave */
 }
 
-/* ───── Tema OSCURO · near-black con aurora ───── */
+/* ───── Tema OSCURO · near-black cálido con rosa empolvado ───── */
 [data-theme="dark"] {
-  --background: 14 11 9;
-  --surface: 26 21 18;
-  --foreground: 245 237 228;
-  --muted: 167 150 136;
-  --border: 54 45 38;
-  --glass: 30 24 20;
-  --primary: 216 160 104; /* caramelo dorado */
-  --primary-foreground: 16 12 9;
-  --accent: 200 132 76;
-  --aurora-1: 200 132 76;
-  --aurora-2: 150 92 48;
-  --aurora-3: 120 70 40;
+  --background: 18 13 12;
+  --surface: 30 23 21;
+  --foreground: 245 237 230;
+  --muted: 173 156 145;
+  --border: 60 49 44;
+  --glass: 32 24 22;
+  --primary: 224 122 156; /* rosa empolvado luminoso para fondo oscuro */
+  --primary-foreground: 22 14 14;
+  --accent: 233 142 170; /* rosa vivo claro */
+  --aurora-1: 224 122 156; /* rosa */
+  --aurora-2: 156 107 74; /* chocolate */
+  --aurora-3: 184 95 127; /* rosa profundo */
 }
 
 html {
