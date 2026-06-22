@@ -8,6 +8,7 @@ import { ThemeToggle } from "@/components/theme-toggle";
 import { Stagger, StaggerItem } from "@/components/ui/stagger";
 import { Magnetic } from "@/components/ui/magnetic";
 import { GlassCard } from "@/components/ui/glass-card";
+import { PostresDecor } from "@/components/decor/PostresDecor";
 
 export default function LoginPage() {
   const router = useRouter();
@@ -52,8 +53,9 @@ export default function LoginPage() {
         <ThemeToggle />
       </header>
 
-      <main className="flex flex-1 items-center justify-center px-4 py-10">
-        <Stagger className="w-full max-w-sm">
+      <main className="relative flex flex-1 items-center justify-center overflow-hidden px-4 py-10">
+        <PostresDecor />
+        <Stagger className="relative z-10 w-full max-w-sm">
           <Magnetic strength={0.12} glow={false}>
             <GlassCard className="p-7">
               <StaggerItem>
