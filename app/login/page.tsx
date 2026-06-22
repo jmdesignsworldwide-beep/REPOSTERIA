@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { createClient } from "@/lib/supabase/client";
 import { ThemeToggle } from "@/components/theme-toggle";
 import { Stagger, StaggerItem } from "@/components/ui/stagger";
@@ -9,6 +10,7 @@ import { Magnetic } from "@/components/ui/magnetic";
 import { GlassCard } from "@/components/ui/glass-card";
 
 export default function LoginPage() {
+  const router = useRouter();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
@@ -24,14 +26,16 @@ export default function LoginPage() {
         email,
         password,
       });
-      setMsg(
-        error
-          ? { ok: false, text: error.message }
-          : { ok: true, text: "Sesión iniciada correctamente." },
-      );
+      if (error) {
+        setMsg({ ok: false, text: error.message });
+        setLoading(false);
+        return;
+      }
+      setMsg({ ok: true, text: "Sesión iniciada. Redirigiendo…" });
+      router.refresh();
+      router.push("/clientes");
     } catch {
       setMsg({ ok: false, text: "No se pudo conectar con Supabase." });
-    } finally {
       setLoading(false);
     }
   }

@@ -177,3 +177,13 @@ export function getDashboardData(): DashboardData {
 
 export const fmtRD = (n: number) =>
   "RD$ " + n.toLocaleString("es-DO", { maximumFractionDigits: 0 });
+
+/**
+ * Historial de pedidos de un cliente (mock por ahora).
+ * En la Tanda 4 esto leerá de la tabla real `pedidos` (cliente_id → clientes.id).
+ */
+export function getPedidosPorCliente(nombre: string): Pedido[] {
+  return PEDIDOS_HOY.filter(
+    (p) => p.cliente.toLowerCase() === nombre.trim().toLowerCase(),
+  );
+}

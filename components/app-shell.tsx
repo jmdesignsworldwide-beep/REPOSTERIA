@@ -7,9 +7,9 @@ import { ThemeToggle } from "./theme-toggle";
 
 const NAV = [
   { label: "Inicio", icon: "🍮", href: "/" },
+  { label: "Clientes", icon: "👥", href: "/clientes" },
   { label: "Productos", icon: "🧁", href: "#" },
   { label: "Pedidos", icon: "🧾", href: "#" },
-  { label: "Clientes", icon: "👥", href: "#" },
   { label: "Ajustes", icon: "⚙️", href: "#" },
 ];
 
