@@ -3,15 +3,30 @@
 import { useState } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import {
+  LayoutDashboard,
+  ClipboardList,
+  CalendarDays,
+  Users,
+  Wallet,
+  Cake,
+  ChefHat,
+  Package,
+  Settings,
+  type LucideIcon,
+} from "lucide-react";
 import { ThemeToggle } from "./theme-toggle";
 
-const NAV = [
-  { label: "Inicio", icon: "🍮", href: "/" },
-  { label: "Pedidos", icon: "🧾", href: "/pedidos" },
-  { label: "Calendario", icon: "📅", href: "/calendario" },
-  { label: "Clientes", icon: "👥", href: "/clientes" },
-  { label: "Caja", icon: "💵", href: "/caja" },
-  { label: "Ajustes", icon: "⚙️", href: "#" },
+const NAV: { label: string; icon: LucideIcon; href: string }[] = [
+  { label: "Inicio", icon: LayoutDashboard, href: "/" },
+  { label: "Pedidos", icon: ClipboardList, href: "/pedidos" },
+  { label: "Calendario", icon: CalendarDays, href: "/calendario" },
+  { label: "Clientes", icon: Users, href: "/clientes" },
+  { label: "Caja", icon: Wallet, href: "/caja" },
+  { label: "Catálogo", icon: Cake, href: "/catalogo" },
+  { label: "Recetas", icon: ChefHat, href: "/recetas" },
+  { label: "Inventario", icon: Package, href: "/inventario" },
+  { label: "Ajustes", icon: Settings, href: "#" },
 ];
 
 export function AppShell({ children }: { children: React.ReactNode }) {
@@ -35,6 +50,7 @@ export function AppShell({ children }: { children: React.ReactNode }) {
         <nav className="flex flex-col gap-1 p-3">
           {NAV.map((item) => {
             const active = item.href === pathname;
+            const Icon = item.icon;
             return (
               <Link
                 key={item.label}
@@ -46,7 +62,7 @@ export function AppShell({ children }: { children: React.ReactNode }) {
                     : "text-muted hover:bg-foreground/5 hover:text-foreground"
                 }`}
               >
-                <span className="text-base">{item.icon}</span>
+                <Icon className="h-[18px] w-[18px]" />
                 {item.label}
               </Link>
             );
