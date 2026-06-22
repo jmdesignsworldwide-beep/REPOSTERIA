@@ -18,12 +18,15 @@ import {
   CreditCard,
   MapPin,
   BarChart3,
+  ShieldCheck,
   Settings,
   type LucideIcon,
 } from "lucide-react";
 import { ThemeToggle } from "./theme-toggle";
 
-const NAV: { label: string; icon: LucideIcon; href: string }[] = [
+type NavItem = { label: string; icon: LucideIcon; href: string; adminOnly?: boolean };
+
+const NAV: NavItem[] = [
   { label: "Inicio", icon: LayoutDashboard, href: "/" },
   { label: "Pedidos", icon: ClipboardList, href: "/pedidos" },
   { label: "Calendario", icon: CalendarDays, href: "/calendario" },
@@ -38,12 +41,20 @@ const NAV: { label: string; icon: LucideIcon; href: string }[] = [
   { label: "Proveedores", icon: Truck, href: "/proveedores" },
   { label: "Producción", icon: Factory, href: "/produccion" },
   { label: "Empleados", icon: Contact, href: "/empleados" },
+  { label: "Accesos", icon: ShieldCheck, href: "/admin", adminOnly: true },
   { label: "Ajustes", icon: Settings, href: "#" },
 ];
 
-export function AppShell({ children }: { children: React.ReactNode }) {
+export function AppShell({
+  children,
+  isAdmin = false,
+}: {
+  children: React.ReactNode;
+  isAdmin?: boolean;
+}) {
   const [open, setOpen] = useState(false);
   const pathname = usePathname();
+  const nav = NAV.filter((item) => !item.adminOnly || isAdmin);
 
   return (
     <div className="min-h-screen">
@@ -60,7 +71,7 @@ export function AppShell({ children }: { children: React.ReactNode }) {
           </span>
         </div>
         <nav className="flex flex-1 flex-col gap-1 overflow-y-auto p-3">
-          {NAV.map((item) => {
+          {nav.map((item) => {
             const active = item.href === pathname;
             const Icon = item.icon;
             return (

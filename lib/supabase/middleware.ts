@@ -3,17 +3,20 @@ import { NextResponse, type NextRequest } from "next/server";
 
 type CookieToSet = { name: string; value: string; options: CookieOptions };
 
-// Única ruta pública: el login. Todo lo demás exige sesión.
-const RUTAS_PUBLICAS = ["/login"];
+// Rutas públicas (sin sesión). Todo lo demás exige sesión válida.
+const PUBLICAS = ["/login", "/expirado"];
 
 /**
- * Refresca la sesión de Supabase en CADA petición (persistencia) y protege
- * las rutas en el servidor:
- *  - sin sesión + ruta interna  → redirige a /login
- *  - con sesión + /login        → redirige a / (Dashboard)
+ * Valida la sesión UNA sola vez por request (refresca token + cookies),
+ * inyecta la identidad en headers (las páginas la leen sin más llamadas de
+ * red → login y navegación rápidos), y protege en el servidor:
+ *  - sin sesión + ruta interna → /login
+ *  - cliente vencido/inactivo → /expirado
+ *  - /admin solo para rol admin
  */
 export async function updateSession(request: NextRequest) {
-  let supabaseResponse = NextResponse.next({ request });
+  const requestHeaders = new Headers(request.headers);
+  let cookiesToApply: CookieToSet[] = [];
 
   const supabase = createServerClient(
     process.env.NEXT_PUBLIC_SUPABASE_URL!,
@@ -23,46 +26,66 @@ export async function updateSession(request: NextRequest) {
         getAll() {
           return request.cookies.getAll();
         },
-        setAll(cookiesToSet: CookieToSet[]) {
-          cookiesToSet.forEach(({ name, value }) =>
-            request.cookies.set(name, value),
-          );
-          supabaseResponse = NextResponse.next({ request });
-          cookiesToSet.forEach(({ name, value, options }) =>
-            supabaseResponse.cookies.set(name, value, options),
-          );
+        setAll(list: CookieToSet[]) {
+          list.forEach(({ name, value }) => request.cookies.set(name, value));
+          cookiesToApply = list;
         },
       },
     },
   );
 
-  // IMPORTANTE: refresca el token (y valida la sesión) en cada request.
   const {
     data: { user },
   } = await supabase.auth.getUser();
 
   const path = request.nextUrl.pathname;
-  const esPublica = RUTAS_PUBLICAS.some(
-    (p) => path === p || path.startsWith(`${p}/`),
-  );
+  const esPublica = PUBLICAS.some((p) => path === p || path.startsWith(`${p}/`));
 
-  // Sin sesión y ruta interna → al login.
-  if (!user && !esPublica) {
+  const aplicar = (res: NextResponse) => {
+    cookiesToApply.forEach(({ name, value, options }) =>
+      res.cookies.set(name, value, options),
+    );
+    return res;
+  };
+  const redir = (to: string) => {
     const url = request.nextUrl.clone();
-    url.pathname = "/login";
-    return NextResponse.redirect(url);
+    url.pathname = to;
+    return aplicar(NextResponse.redirect(url));
+  };
+
+  // Sin sesión → solo rutas públicas.
+  if (!user) {
+    if (esPublica) return aplicar(NextResponse.next({ request: { headers: requestHeaders } }));
+    return redir("/login");
   }
 
-  // Con sesión y en /login → al Dashboard (conservando cookies refrescadas).
-  if (user && esPublica) {
-    const url = request.nextUrl.clone();
-    url.pathname = "/";
-    const redirect = NextResponse.redirect(url);
-    supabaseResponse.cookies.getAll().forEach((c) => {
-      redirect.cookies.set(c.name, c.value);
-    });
-    return redirect;
+  const meta = (user.app_metadata ?? {}) as Record<string, unknown>;
+  const rol = meta.rol === "admin" ? "admin" : "cliente";
+  const activo = meta.activo !== false;
+  const expira = typeof meta.expira_at === "string" ? new Date(meta.expira_at) : null;
+  const vencido =
+    rol !== "admin" && (!activo || (expira !== null && expira.getTime() < Date.now()));
+
+  // Cliente vencido → siempre a /expirado.
+  if (vencido) {
+    return path === "/expirado"
+      ? aplicar(NextResponse.next({ request: { headers: requestHeaders } }))
+      : redir("/expirado");
   }
 
-  return supabaseResponse;
+  // Con sesión vigente, no tiene sentido /login ni /expirado.
+  if (path === "/login" || path === "/expirado") return redir("/");
+
+  // /admin solo para admin.
+  if (path === "/admin" || path.startsWith("/admin/")) {
+    if (rol !== "admin") return redir("/");
+  }
+
+  // Identidad para las páginas (sin llamadas de red en cada una).
+  requestHeaders.set("x-ac-user-id", user.id);
+  requestHeaders.set("x-ac-rol", rol);
+  requestHeaders.set("x-ac-username", typeof meta.username === "string" ? meta.username : "");
+  requestHeaders.set("x-ac-email", user.email ?? "");
+
+  return aplicar(NextResponse.next({ request: { headers: requestHeaders } }));
 }
