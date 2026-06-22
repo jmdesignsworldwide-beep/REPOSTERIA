@@ -22,7 +22,7 @@ export function Stagger({
     show: {
       transition: reduce
         ? {}
-        : { staggerChildren: 0.07, delayChildren: delay },
+        : { staggerChildren: 0.06, delayChildren: delay },
     },
   };
 
@@ -48,13 +48,13 @@ export function StaggerItem({
   const reduce = useReducedMotion();
 
   const item: Variants = {
-    hidden: reduce ? { opacity: 0 } : { opacity: 0, y: 12 },
+    hidden: reduce ? { opacity: 0 } : { opacity: 0, y: 7 },
     show: {
       opacity: 1,
       y: 0,
       transition: reduce
         ? { duration: 0 }
-        : { type: "spring", stiffness: 280, damping: 24 },
+        : { type: "spring", stiffness: 140, damping: 26, mass: 0.7 },
     },
   };
 

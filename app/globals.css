@@ -5,37 +5,41 @@
 /* ════════════ Azúcar & Canela · Sistema de diseño ════════════ */
 /* Colores en canales RGB para permitir transparencias (glass, aurora). */
 
-/* ───── Tema CLARO · crema cálido elegante ───── */
+/* ───── Tema CLARO · crema base + rosa empolvado apagado (boutique) ───── */
 :root,
 [data-theme="light"] {
-  --background: 250 243 233;
-  --surface: 255 250 244;
-  --foreground: 43 31 24;
-  --muted: 124 104 90;
-  --border: 232 217 200;
-  --glass: 255 250 244;
-  --primary: 176 104 52; /* caramelo / cobre */
-  --primary-foreground: 255 250 244;
-  --accent: 209 152 96; /* caramelo claro */
-  --aurora-1: 209 152 96;
-  --aurora-2: 176 104 52;
-  --aurora-3: 224 186 142;
+  --background: 251 245 239; /* crema cálida #FBF5EF */
+  --surface: 255 253 250; /* casi blanco cálido (tarjetas) #FFFDFA */
+  --foreground: 74 53 48; /* taupe oscuro legible (cálido, no marrón fuerte) */
+  --muted: 140 110 100; /* taupe rosado para texto secundario */
+  --border: 239 226 217; /* borde crema/rosa muy suave #EFE2D9 */
+  --glass: 255 253 250;
+  --primary: 168 95 82; /* rosa terracota apagado #A85F52 (legible y empolvado) */
+  --primary-foreground: 251 245 239;
+  --accent: 212 147 138; /* rosa empolvado vivo #D4938A */
+  --sidebar: 255 253 250;
+  --sidebar-foreground: 74 53 48;
+  --aurora-1: 224 168 160; /* rosa empolvado #E0A8A0 */
+  --aurora-2: 201 138 110; /* caramelo apagado #C98A6E */
+  --aurora-3: 243 220 216; /* rosa claro #F3DCD8 */
 }
 
-/* ───── Tema OSCURO · near-black con aurora ───── */
+/* ───── Tema OSCURO · near-black cálido rosado + rosa empolvado claro ───── */
 [data-theme="dark"] {
-  --background: 14 11 9;
-  --surface: 26 21 18;
-  --foreground: 245 237 228;
-  --muted: 167 150 136;
-  --border: 54 45 38;
-  --glass: 30 24 20;
-  --primary: 216 160 104; /* caramelo dorado */
-  --primary-foreground: 16 12 9;
-  --accent: 200 132 76;
-  --aurora-1: 200 132 76;
-  --aurora-2: 150 92 48;
-  --aurora-3: 120 70 40;
+  --background: 28 24 21; /* near-black cálido #1C1815 */
+  --surface: 42 35 31;
+  --foreground: 245 236 230;
+  --muted: 188 162 152; /* taupe claro */
+  --border: 64 53 47;
+  --glass: 44 36 32;
+  --primary: 224 168 160; /* rosa empolvado claro #E0A8A0 (resalta en oscuro) */
+  --primary-foreground: 28 24 21;
+  --accent: 232 184 176; /* rosa claro #E8B8B0 */
+  --sidebar: 42 35 31;
+  --sidebar-foreground: 245 236 230;
+  --aurora-1: 224 168 160;
+  --aurora-2: 201 138 110;
+  --aurora-3: 184 120 110;
 }
 
 html {
@@ -47,6 +51,19 @@ body {
   color: rgb(var(--foreground));
   font-family: var(--font-sans), ui-sans-serif, system-ui, -apple-system,
     "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+}
+
+/* DM Serif Display solo trae peso 400: forzamos 400 para evitar "negrita falsa"
+   en los títulos. La serif a 400 ya tiene presencia. */
+.font-display {
+  font-weight: 400 !important;
+  letter-spacing: -0.01em;
+}
+
+/* Los números (tabular-nums) siempre en la sans, aunque hereden de un título
+   serif — evita cifras serif pesadas y mantiene el conteo estable. */
+.tabular-nums {
+  font-family: var(--font-sans), ui-sans-serif, system-ui, sans-serif;
 }
 
 /* ───── Shimmer para skeletons ───── */

@@ -11,7 +11,7 @@ import { motion, useMotionValue, useSpring, useReducedMotion } from "framer-moti
 export function Magnetic({
   children,
   className,
-  strength = 0.25,
+  strength = 0.15,
   glow = true,
 }: {
   children: React.ReactNode;
@@ -23,8 +23,8 @@ export function Magnetic({
   const ref = useRef<HTMLDivElement>(null);
   const x = useMotionValue(0);
   const y = useMotionValue(0);
-  const sx = useSpring(x, { stiffness: 200, damping: 15, mass: 0.5 });
-  const sy = useSpring(y, { stiffness: 200, damping: 15, mass: 0.5 });
+  const sx = useSpring(x, { stiffness: 150, damping: 22, mass: 0.6 });
+  const sy = useSpring(y, { stiffness: 150, damping: 22, mass: 0.6 });
 
   function handleMove(e: React.MouseEvent) {
     if (reduce || !ref.current) return;
@@ -44,9 +44,9 @@ export function Magnetic({
       onMouseMove={handleMove}
       onMouseLeave={handleLeave}
       style={{ x: reduce ? 0 : sx, y: reduce ? 0 : sy }}
-      whileHover={reduce ? {} : { scale: 1.02 }}
-      whileTap={reduce ? {} : { scale: 0.99 }}
-      transition={{ type: "spring", stiffness: 300, damping: 20 }}
+      whileHover={reduce ? {} : { scale: 1.01 }}
+      whileTap={reduce ? {} : { scale: 0.995 }}
+      transition={{ type: "spring", stiffness: 180, damping: 26 }}
       className={`${glow ? "transition-shadow duration-300 hover:shadow-glow" : ""} ${
         className ?? ""
       }`}

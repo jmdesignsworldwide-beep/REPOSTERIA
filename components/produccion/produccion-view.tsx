@@ -90,7 +90,7 @@ export function ProduccionView({
           <StaggerItem>
             <GlassCard className="flex flex-col justify-center p-5">
               <p className="text-xs font-medium text-muted">Productos listos 🔔</p>
-              <p className="mt-1 font-display text-3xl font-bold tabular-nums text-emerald-600 dark:text-emerald-400">
+              <p className="mt-1 text-3xl font-bold tabular-nums text-emerald-600 dark:text-emerald-400">
                 {listos}
               </p>
             </GlassCard>

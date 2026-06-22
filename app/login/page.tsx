@@ -23,7 +23,7 @@ export default function LoginPage() {
     setMsg(null);
     try {
       const supabase = createClient();
-      const { error } = await supabase.auth.signInWithPassword({
+      const { data, error } = await supabase.auth.signInWithPassword({
         email,
         password,
       });
@@ -32,9 +32,18 @@ export default function LoginPage() {
         setLoading(false);
         return;
       }
+      // Prepara la bienvenida cinematográfica (una vez por sesión).
+      try {
+        const nombre =
+          (data.user?.user_metadata?.name as string | undefined) ||
+          data.user?.email?.split("@")[0] ||
+          "";
+        sessionStorage.setItem("ac_welcome_name", nombre);
+        sessionStorage.removeItem("ac_welcome_seen");
+      } catch {}
       setMsg({ ok: true, text: "Sesión iniciada. Redirigiendo…" });
       router.refresh();
-      router.push("/clientes");
+      router.push("/");
     } catch {
       setMsg({ ok: false, text: "No se pudo conectar con Supabase." });
       setLoading(false);

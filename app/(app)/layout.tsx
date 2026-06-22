@@ -1,9 +1,15 @@
 import { AppShell } from "@/components/app-shell";
+import { WelcomeOverlay } from "@/components/welcome/welcome-overlay";
 
 export default function AppGroupLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
-  return <AppShell>{children}</AppShell>;
+  return (
+    <>
+      <WelcomeOverlay />
+      <AppShell>{children}</AppShell>
+    </>
+  );
 }

@@ -46,5 +46,5 @@ export const ENTREGAS_RESUMEN = [
   { tipo: "Recoge en tienda", valor: 36 },
 ];
 
-// Paleta cálida (caramelo/cobre + acentos) para los gráficos.
-export const COLORES = ["#c9803f", "#e0a96d", "#a8602f", "#d9a96e", "#8a4f25", "#eac39a"];
+// Paleta de marca — rosa empolvado apagado + caramelo apagado para los gráficos.
+export const COLORES = ["#A85F52", "#D4938A", "#C98A6E", "#E0A8A0", "#8A5A3C", "#F3DCD8"];

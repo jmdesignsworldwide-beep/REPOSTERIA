@@ -37,7 +37,7 @@ export function PagosView({ pagos }: { pagos: Pago[] }) {
             <StaggerItem key={k.label}>
               <GlassCard className="p-4 sm:p-5">
                 <p className="text-xs font-medium text-muted">{k.label}</p>
-                <p className={`mt-2 font-display text-xl font-bold tabular-nums sm:text-2xl ${k.cls}`}>
+                <p className={`mt-2 text-xl font-bold tabular-nums sm:text-2xl ${k.cls}`}>
                   <CountUp value={k.value} prefix={k.prefix} />
                 </p>
               </GlassCard>
@@ -115,7 +115,7 @@ export function PagosView({ pagos }: { pagos: Pago[] }) {
               </div>
               <div className="flex items-center justify-between border-t border-foreground/10 pt-3">
                 <span className="font-medium">Total</span>
-                <span className="font-display text-xl font-bold tabular-nums text-primary">
+                <span className="text-xl font-bold tabular-nums text-primary">
                   {fmtRD(sel.monto)}
                 </span>
               </div>

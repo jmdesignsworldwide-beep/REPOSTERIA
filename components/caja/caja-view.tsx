@@ -132,7 +132,7 @@ export function CajaView({ initial }: { initial: Movimiento[] }) {
             <StaggerItem key={b.label}>
               <GlassCard className="p-4 sm:p-5">
                 <p className="text-xs font-medium text-muted">{b.label}</p>
-                <p className={`mt-2 font-display text-xl font-bold tabular-nums sm:text-2xl ${b.cls}`}>
+                <p className={`mt-2 text-xl font-bold tabular-nums sm:text-2xl ${b.cls}`}>
                   <CountUp value={b.value} prefix="RD$ " />
                 </p>
               </GlassCard>

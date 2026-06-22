@@ -178,7 +178,7 @@ export function DashboardView({
                   <p className="text-xs font-medium text-muted">{k.label}</p>
                   {k.live && <LiveDot className="text-primary" />}
                 </div>
-                <p className="mt-2 font-display text-2xl font-bold sm:text-3xl">
+                <p className="mt-2 text-2xl font-bold tabular-nums sm:text-3xl">
                   <CountUp value={k.value} prefix={k.prefix} />
                 </p>
                 <p className="mt-1 text-xs text-muted">

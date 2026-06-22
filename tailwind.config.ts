@@ -18,6 +18,8 @@ const config: Config = {
         border: rgb("--border"),
         glass: rgb("--glass"),
         accent: rgb("--accent"),
+        sidebar: rgb("--sidebar"),
+        "sidebar-foreground": rgb("--sidebar-foreground"),
         primary: {
           DEFAULT: rgb("--primary"),
           foreground: rgb("--primary-foreground"),
@@ -28,8 +30,8 @@ const config: Config = {
         display: ["var(--font-display)", "ui-serif", "Georgia", "serif"],
       },
       boxShadow: {
-        glow: "0 0 0 1px rgb(var(--primary) / 0.25), 0 8px 40px -8px rgb(var(--primary) / 0.45)",
-        card: "0 10px 30px -12px rgb(0 0 0 / 0.25)",
+        glow: "0 0 0 1px rgb(var(--primary) / 0.14), 0 6px 24px -10px rgb(var(--primary) / 0.28)",
+        card: "0 1px 2px rgb(0 0 0 / 0.04), 0 10px 28px -14px rgb(0 0 0 / 0.18)",
       },
     },
   },
