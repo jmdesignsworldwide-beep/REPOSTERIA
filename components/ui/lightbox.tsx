@@ -1,6 +1,7 @@
 "use client";
 
 import { useCallback, useEffect, useState } from "react";
+import { createPortal } from "react-dom";
 import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
 import { X, ChevronLeft, ChevronRight } from "lucide-react";
 import { createClient } from "@/lib/supabase/client";
@@ -31,7 +32,10 @@ export function Lightbox({
 }) {
   const reduce = useReducedMotion();
   const [url, setUrl] = useState<string | null>(null);
+  const [mounted, setMounted] = useState(false);
   const open = index !== null && index >= 0 && index < paths.length;
+
+  useEffect(() => setMounted(true), []);
 
   const prev = useCallback(() => {
     if (index === null) return;
@@ -68,11 +72,13 @@ export function Lightbox({
     return () => document.removeEventListener("keydown", onKey);
   }, [open, onClose, prev, next, paths.length]);
 
-  return (
+  if (!mounted) return null;
+
+  return createPortal(
     <AnimatePresence>
       {open && index !== null && (
         <motion.div
-          className="fixed inset-0 z-[110] flex items-center justify-center bg-black/80 p-4 backdrop-blur-sm"
+          className="fixed inset-0 z-[120] flex items-center justify-center bg-black/85 p-4 backdrop-blur-sm sm:p-8"
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
@@ -118,14 +124,14 @@ export function Lightbox({
             animate={{ opacity: 1, scale: 1 }}
             exit={reduce ? { opacity: 0 } : { opacity: 0, scale: 0.98 }}
             transition={{ duration: 0.2, ease: "easeOut" }}
-            className="relative flex max-h-[88vh] max-w-[92vw] items-center justify-center"
+            className="relative flex items-center justify-center"
           >
             {url ? (
               // eslint-disable-next-line @next/next/no-img-element
               <img
                 src={url}
                 alt="Foto de referencia"
-                className="max-h-[88vh] max-w-[92vw] rounded-xl object-contain shadow-2xl"
+                className="block h-auto max-h-[90vh] w-auto max-w-[94vw] rounded-xl object-contain shadow-2xl"
               />
             ) : (
               <div className="h-48 w-48 animate-pulse rounded-xl bg-white/10" />
@@ -138,6 +144,7 @@ export function Lightbox({
           </motion.div>
         </motion.div>
       )}
-    </AnimatePresence>
+    </AnimatePresence>,
+    document.body,
   );
 }
