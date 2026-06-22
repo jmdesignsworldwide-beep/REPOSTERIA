@@ -1,0 +1,83 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* ════════════ Azúcar & Canela · Sistema de diseño ════════════ */
+/* Colores en canales RGB para permitir transparencias (glass, aurora). */
+
+/* ───── Tema CLARO · crema cálido elegante ───── */
+:root,
+[data-theme="light"] {
+  --background: 250 243 233;
+  --surface: 255 250 244;
+  --foreground: 43 31 24;
+  --muted: 124 104 90;
+  --border: 232 217 200;
+  --glass: 255 250 244;
+  --primary: 176 104 52; /* caramelo / cobre */
+  --primary-foreground: 255 250 244;
+  --accent: 209 152 96; /* caramelo claro */
+  --aurora-1: 209 152 96;
+  --aurora-2: 176 104 52;
+  --aurora-3: 224 186 142;
+}
+
+/* ───── Tema OSCURO · near-black con aurora ───── */
+[data-theme="dark"] {
+  --background: 14 11 9;
+  --surface: 26 21 18;
+  --foreground: 245 237 228;
+  --muted: 167 150 136;
+  --border: 54 45 38;
+  --glass: 30 24 20;
+  --primary: 216 160 104; /* caramelo dorado */
+  --primary-foreground: 16 12 9;
+  --accent: 200 132 76;
+  --aurora-1: 200 132 76;
+  --aurora-2: 150 92 48;
+  --aurora-3: 120 70 40;
+}
+
+html {
+  color-scheme: light dark;
+}
+
+body {
+  background: rgb(var(--background));
+  color: rgb(var(--foreground));
+  font-family: var(--font-sans), ui-sans-serif, system-ui, -apple-system,
+    "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+}
+
+/* ───── Shimmer para skeletons ───── */
+.shimmer::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  transform: translateX(-100%);
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgb(var(--foreground) / 0.07),
+    transparent
+  );
+  animation: shimmer 1.6s ease-in-out infinite;
+}
+
+@keyframes shimmer {
+  100% {
+    transform: translateX(100%);
+  }
+}
+
+/* ───── Respeto a prefers-reduced-motion (anima CSS; Framer usa su hook) ───── */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+    scroll-behavior: auto !important;
+  }
+}
