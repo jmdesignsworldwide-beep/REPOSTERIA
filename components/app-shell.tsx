@@ -12,6 +12,9 @@ import {
   Cake,
   ChefHat,
   Package,
+  Truck,
+  Factory,
+  Contact,
   Settings,
   type LucideIcon,
 } from "lucide-react";
@@ -26,6 +29,9 @@ const NAV: { label: string; icon: LucideIcon; href: string }[] = [
   { label: "Catálogo", icon: Cake, href: "/catalogo" },
   { label: "Recetas", icon: ChefHat, href: "/recetas" },
   { label: "Inventario", icon: Package, href: "/inventario" },
+  { label: "Proveedores", icon: Truck, href: "/proveedores" },
+  { label: "Producción", icon: Factory, href: "/produccion" },
+  { label: "Empleados", icon: Contact, href: "/empleados" },
   { label: "Ajustes", icon: Settings, href: "#" },
 ];
 
@@ -37,17 +43,17 @@ export function AppShell({ children }: { children: React.ReactNode }) {
     <div className="min-h-screen">
       {/* ───────────── Sidebar ───────────── */}
       <aside
-        className={`fixed inset-y-0 left-0 z-40 w-64 transform border-r border-foreground/10 bg-glass/60 backdrop-blur-xl transition-transform duration-200 md:translate-x-0 ${
+        className={`fixed inset-y-0 left-0 z-40 flex w-64 transform flex-col border-r border-foreground/10 bg-glass/60 backdrop-blur-xl transition-transform duration-200 md:translate-x-0 ${
           open ? "translate-x-0" : "-translate-x-full"
         }`}
       >
-        <div className="flex h-16 items-center gap-2 border-b border-foreground/10 px-5">
+        <div className="flex h-16 shrink-0 items-center gap-2 border-b border-foreground/10 px-5">
           <span className="text-xl">🍮</span>
           <span className="font-display text-lg font-semibold leading-tight">
             Azúcar <span className="text-primary">&amp;</span> Canela
           </span>
         </div>
-        <nav className="flex flex-col gap-1 p-3">
+        <nav className="flex flex-1 flex-col gap-1 overflow-y-auto p-3">
           {NAV.map((item) => {
             const active = item.href === pathname;
             const Icon = item.icon;
