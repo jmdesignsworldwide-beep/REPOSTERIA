@@ -2,14 +2,38 @@
 @tailwind components;
 @tailwind utilities;
 
-:root {
-  --background: #fff7f2;
+/* ───────────── Sistema de diseño · Tema CLARO (por defecto) ───────────── */
+:root,
+[data-theme="light"] {
+  --background: #fdf6f0;
+  --surface: #ffffff;
   --foreground: #3b2a23;
+  --muted: #8a7a70;
+  --border: #efe2d8;
+  --sidebar: #fff0e8;
+  --primary: #d6336c;
+  --primary-foreground: #ffffff;
+}
+
+/* ───────────── Sistema de diseño · Tema OSCURO ───────────── */
+[data-theme="dark"] {
+  --background: #1a1413;
+  --surface: #241c1a;
+  --foreground: #f5ece7;
+  --muted: #b0a099;
+  --border: #3a2e2a;
+  --sidebar: #221a18;
+  --primary: #f06595;
+  --primary-foreground: #1a1413;
+}
+
+html {
+  color-scheme: light dark;
 }
 
 body {
-  color: var(--foreground);
   background: var(--background);
+  color: var(--foreground);
   font-family: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto,
     Helvetica, Arial, sans-serif;
 }
