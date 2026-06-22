@@ -5,6 +5,7 @@ import { fmtRD } from "@/lib/data/mock";
 import { ESTADOS, estadoMeta, abonadoDe, balanceDe } from "@/lib/pedidos/types";
 import type { EstadoPedido, Pedido } from "@/lib/pedidos/types";
 import { SignedImg } from "@/components/ui/signed-img";
+import { Lightbox } from "@/components/ui/lightbox";
 
 export function EstadoBadge({ estado }: { estado: EstadoPedido }) {
   const e = estadoMeta(estado);
@@ -25,6 +26,7 @@ export function PedidoDetalle({
   onCobrar?: () => void;
 }) {
   const [cambiando, setCambiando] = useState<EstadoPedido | null>(null);
+  const [lbIndex, setLbIndex] = useState<number | null>(null);
   const abonado = abonadoDe(pedido);
   const balance = balanceDe(pedido);
 
@@ -73,16 +75,19 @@ export function PedidoDetalle({
         </div>
       )}
 
-      {/* Fotos (bucket privado → URL firmada) */}
+      {/* Fotos (bucket privado → URL firmada). Clic → ampliar. */}
       {pedido.fotos.length > 0 && (
         <div className="flex flex-wrap gap-2">
-          {pedido.fotos.map((path) => (
-            <div
+          {pedido.fotos.map((path, i) => (
+            <button
               key={path}
-              className="h-24 w-24 overflow-hidden rounded-xl border border-foreground/10"
+              type="button"
+              onClick={() => setLbIndex(i)}
+              aria-label="Ver foto en grande"
+              className="h-24 w-24 overflow-hidden rounded-xl border border-foreground/10 transition-transform hover:border-primary/40"
             >
               <SignedImg src={path} alt="Referencia" className="h-full w-full object-cover" />
-            </div>
+            </button>
           ))}
         </div>
       )}
@@ -147,6 +152,13 @@ export function PedidoDetalle({
           {pedido.notas}
         </div>
       )}
+
+      <Lightbox
+        paths={pedido.fotos}
+        index={lbIndex}
+        onClose={() => setLbIndex(null)}
+        onIndex={setLbIndex}
+      />
     </div>
   );
 }
