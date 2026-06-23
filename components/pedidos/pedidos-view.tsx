@@ -1,7 +1,7 @@
 "use client";
 
-import { useMemo, useState, useTransition } from "react";
-import { useRouter } from "next/navigation";
+import { useEffect, useMemo, useRef, useState, useTransition } from "react";
+import { useRouter, useSearchParams } from "next/navigation";
 import { Stagger, StaggerItem } from "@/components/ui/stagger";
 import { Magnetic } from "@/components/ui/magnetic";
 import { GlassCard } from "@/components/ui/glass-card";
@@ -40,13 +40,28 @@ export function PedidosView({
   clientes: Cliente[];
 }) {
   const router = useRouter();
+  const searchParams = useSearchParams();
   const [vista, setVista] = useState<"lista" | "tablero">("lista");
   const [busqueda, setBusqueda] = useState("");
   const [filtro, setFiltro] = useState<Filtro>("todos");
   const [modal, setModal] = useState<ModalState>(null);
+  const [nuevaFecha, setNuevaFecha] = useState<string | undefined>(undefined);
   const [pending, startTransition] = useTransition();
 
   const activos = useMemo(() => initial.filter((p) => p.activo), [initial]);
+
+  // Deep-link desde el Calendario: /pedidos?nuevo=YYYY-MM-DD abre el formulario
+  // de nuevo pedido con la fecha de entrega pre-cargada.
+  const abierto = useRef(false);
+  useEffect(() => {
+    const fecha = searchParams.get("nuevo");
+    if (fecha && !abierto.current) {
+      abierto.current = true;
+      setNuevaFecha(/^\d{4}-\d{2}-\d{2}$/.test(fecha) ? fecha : undefined);
+      setModal({ type: "nuevo" });
+      router.replace("/pedidos");
+    }
+  }, [searchParams, router]);
 
   const lista = useMemo(() => {
     const q = busqueda.trim().toLowerCase();
@@ -266,11 +281,18 @@ export function PedidosView({
       {/* Nuevo */}
       <Modal
         open={modal?.type === "nuevo"}
-        onClose={() => setModal(null)}
+        onClose={() => {
+          setModal(null);
+          setNuevaFecha(undefined);
+        }}
         title="Nuevo pedido"
         subtitle="Se guarda en la base de datos"
       >
-        <PedidoForm clientes={clientes} onSave={guardarNuevo} />
+        <PedidoForm
+          clientes={clientes}
+          fechaInicial={nuevaFecha}
+          onSave={guardarNuevo}
+        />
       </Modal>
 
       {/* Editar */}
