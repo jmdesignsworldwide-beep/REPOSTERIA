@@ -70,7 +70,7 @@ export function MovimientoForm({
               : "border border-foreground/15 bg-glass/60 text-muted"
           }`}
         >
-          ↑ Ingreso
+          ↑ Entrada
         </button>
         <button
           type="button"
@@ -81,7 +81,7 @@ export function MovimientoForm({
               : "border border-foreground/15 bg-glass/60 text-muted"
           }`}
         >
-          ↓ Egreso
+          ↓ Salida
         </button>
       </div>
 
@@ -151,7 +151,7 @@ export function MovimientoForm({
         disabled={saving}
         className="w-full rounded-xl bg-primary px-4 py-2.5 text-sm font-semibold text-primary-foreground shadow-glow disabled:opacity-60"
       >
-        {saving ? "Guardando…" : "Registrar movimiento"}
+        {saving ? "Guardando…" : "Registrar"}
       </button>
     </form>
   );

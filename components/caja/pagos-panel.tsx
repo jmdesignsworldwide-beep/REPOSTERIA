@@ -65,8 +65,8 @@ export function PagosPanel({ movimientos }: { movimientos: Movimiento[] }) {
             </h2>
             {pagos.length === 0 ? (
               <p className="text-sm text-muted">
-                Aún no hay pagos. Cobra un pedido desde Pedidos o registra un
-                ingreso en la pestaña Movimientos.
+                Aún no hay pagos. Cobra un pedido desde Pedidos o registra una
+                entrada en la pestaña Entradas y salidas.
               </p>
             ) : (
               <Stagger className="space-y-2">

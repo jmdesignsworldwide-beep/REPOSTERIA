@@ -117,7 +117,7 @@ export function CajaView({ initial }: { initial: Movimiento[] }) {
                   onClick={() => setModal({ type: "nuevo", tipo: "ingreso" })}
                   className="rounded-full bg-emerald-600 px-4 py-2.5 text-sm font-semibold text-white"
                 >
-                  + Ingreso
+                  + Entrada
                 </button>
               </Magnetic>
               <Magnetic strength={0.2} glow={false}>
@@ -125,7 +125,7 @@ export function CajaView({ initial }: { initial: Movimiento[] }) {
                   onClick={() => setModal({ type: "nuevo", tipo: "egreso" })}
                   className="rounded-full border border-foreground/15 bg-glass/60 px-4 py-2.5 text-sm font-semibold backdrop-blur"
                 >
-                  + Egreso
+                  + Salida
                 </button>
               </Magnetic>
             </div>
@@ -135,9 +135,9 @@ export function CajaView({ initial }: { initial: Movimiento[] }) {
         {/* Balance */}
         <div className="grid grid-cols-3 gap-4">
           {[
-            { label: "Ingresos", value: ingresos, cls: "text-emerald-600 dark:text-emerald-400" },
-            { label: "Egresos", value: egresos, cls: "text-red-600 dark:text-red-400" },
-            { label: "Balance neto", value: neto, cls: "text-primary" },
+            { label: "Entradas", value: ingresos, cls: "text-emerald-600 dark:text-emerald-400" },
+            { label: "Salidas", value: egresos, cls: "text-red-600 dark:text-red-400" },
+            { label: "Saldo del día", value: neto, cls: "text-primary" },
           ].map((b) => (
             <StaggerItem key={b.label}>
               <GlassCard className="p-4 sm:p-5">
@@ -171,7 +171,7 @@ export function CajaView({ initial }: { initial: Movimiento[] }) {
             <div className="inline-flex rounded-xl border border-foreground/10 bg-glass/50 p-1 backdrop-blur">
               {(
                 [
-                  { id: "movimientos", label: "💸 Movimientos" },
+                  { id: "movimientos", label: "💸 Entradas y salidas" },
                   { id: "pagos", label: "🧾 Pagos y recibos" },
                 ] as const
               ).map((v) => (
@@ -199,10 +199,10 @@ export function CajaView({ initial }: { initial: Movimiento[] }) {
           <StaggerItem className="lg:col-span-2">
             <GlassCard className="p-5">
               <h2 className="mb-4 font-display text-lg font-semibold">
-                Movimientos
+                Entradas y salidas
               </h2>
               {lista.length === 0 ? (
-                <p className="text-sm text-muted">No hay movimientos en este rango.</p>
+                <p className="text-sm text-muted">No hay entradas ni salidas en este rango.</p>
               ) : (
                 <Stagger className="space-y-2">
                   {lista.map((m) => (
@@ -257,7 +257,7 @@ export function CajaView({ initial }: { initial: Movimiento[] }) {
           <StaggerItem>
             <GlassCard className="p-5">
               <h2 className="mb-1 font-display text-lg font-semibold">
-                Arqueo de cierre
+                Cierre de caja
               </h2>
               <p className="mb-4 text-xs text-muted">Neto por método</p>
               <div className="space-y-2">
@@ -285,7 +285,7 @@ export function CajaView({ initial }: { initial: Movimiento[] }) {
       <Modal
         open={modal?.type === "nuevo"}
         onClose={() => setModal(null)}
-        title="Nuevo movimiento"
+        title="Nueva entrada o salida"
         subtitle="Se guarda en la caja"
       >
         {modal?.type === "nuevo" && (
@@ -306,7 +306,7 @@ export function CajaView({ initial }: { initial: Movimiento[] }) {
         title={modal?.type === "detalle" ? modal.mov.concepto : ""}
         subtitle={
           modal?.type === "detalle"
-            ? `${modal.mov.tipo === "ingreso" ? "Ingreso" : "Egreso"} · ${modal.mov.fecha}`
+            ? `${modal.mov.tipo === "ingreso" ? "Entrada" : "Salida"} · ${modal.mov.fecha}`
             : undefined
         }
         footer={
@@ -315,7 +315,7 @@ export function CajaView({ initial }: { initial: Movimiento[] }) {
               onClick={() => setModal({ type: "confirmar", mov: modal.mov })}
               className="w-full rounded-xl border border-red-500/30 bg-red-500/10 px-4 py-2.5 text-sm font-semibold text-red-600 dark:text-red-400"
             >
-              Anular movimiento
+              Anular
             </button>
           ) : undefined
         }
@@ -339,7 +339,7 @@ export function CajaView({ initial }: { initial: Movimiento[] }) {
             )}
             {modal.mov.anulado && (
               <p className="rounded-xl border border-foreground/10 bg-foreground/[0.04] px-3 py-2 text-muted">
-                Este movimiento está anulado (no cuenta en el balance).
+                Esta entrada o salida está anulada (no cuenta en el saldo).
               </p>
             )}
           </div>
@@ -350,7 +350,7 @@ export function CajaView({ initial }: { initial: Movimiento[] }) {
       <Modal
         open={modal?.type === "confirmar"}
         onClose={() => setModal(null)}
-        title="¿Anular movimiento?"
+        title="¿Anular esta entrada o salida?"
       >
         {modal?.type === "confirmar" && (
           <div className="space-y-5">
@@ -358,8 +358,8 @@ export function CajaView({ initial }: { initial: Movimiento[] }) {
               <span className="font-medium text-foreground">
                 {modal.mov.concepto}
               </span>{" "}
-              dejará de contar en el balance. No se borra: queda registrado como
-              anulado para un arqueo honesto.
+              dejará de contar en el saldo. No se borra: queda registrado como
+              anulado para un cierre de caja honesto.
             </p>
             <div className="flex gap-2">
               <button

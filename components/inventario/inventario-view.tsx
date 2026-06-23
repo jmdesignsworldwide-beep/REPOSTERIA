@@ -146,7 +146,7 @@ export function InventarioView({ embedded = false }: { embedded?: boolean }) {
 
           <StaggerItem>
             <GlassCard className="p-5">
-              <h2 className="mb-4 font-display text-lg font-semibold">Mermas y desperdicios</h2>
+              <h2 className="mb-4 font-display text-lg font-semibold">Desperdicios</h2>
               <div className="space-y-2">
                 {MERMAS.map((m, idx) => (
                   <div key={idx} className="flex items-center justify-between rounded-lg border border-foreground/5 bg-foreground/[0.03] px-3 py-2 text-sm">
@@ -239,7 +239,7 @@ function DetalleItem({ item }: { item: ItemInventario }) {
 
       {mermas.length > 0 && (
         <div>
-          <p className="mb-2 text-xs font-medium text-muted">Mermas</p>
+          <p className="mb-2 text-xs font-medium text-muted">Desperdicios</p>
           <div className="space-y-1.5">
             {mermas.map((m, i) => (
               <div key={i} className="rounded-lg border border-foreground/5 bg-foreground/[0.03] px-3 py-2 text-sm">

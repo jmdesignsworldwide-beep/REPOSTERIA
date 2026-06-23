@@ -96,7 +96,7 @@ export function PedidoDetalle({
 
       {/* Renglones */}
       <div>
-        <p className="mb-2 text-xs font-medium text-muted">Renglones</p>
+        <p className="mb-2 text-xs font-medium text-muted">Productos</p>
         <div className="space-y-1.5">
           {pedido.items.map((it, i) => (
             <div
@@ -123,13 +123,13 @@ export function PedidoDetalle({
           <p className="tabular-nums font-semibold">{fmtRD(pedido.total)}</p>
         </div>
         <div className="rounded-xl border border-foreground/10 bg-foreground/[0.03] p-3">
-          <p className="text-xs text-muted">Abonado</p>
+          <p className="text-xs text-muted">Pagado</p>
           <p className="tabular-nums font-semibold text-emerald-600 dark:text-emerald-400">
             {fmtRD(abonado)}
           </p>
         </div>
         <div className="rounded-xl border border-foreground/10 bg-foreground/[0.03] p-3">
-          <p className="text-xs text-muted">Balance</p>
+          <p className="text-xs text-muted">Pendiente</p>
           <p className="tabular-nums font-semibold text-primary">
             {fmtRD(balance)}
           </p>
