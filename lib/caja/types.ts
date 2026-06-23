@@ -43,7 +43,7 @@ export const CATEGORIAS: { id: CategoriaMov; label: string; tipo: TipoMov }[] = 
   { id: "venta_directa", label: "Venta directa", tipo: "ingreso" },
   { id: "pago_pedido", label: "Pago de pedido", tipo: "ingreso" },
   { id: "gasto_operativo", label: "Gasto operativo", tipo: "egreso" },
-  { id: "compra_insumos", label: "Compra de insumos", tipo: "egreso" },
+  { id: "compra_insumos", label: "Compra de ingredientes", tipo: "egreso" },
   { id: "otro", label: "Otro", tipo: "ingreso" },
 ];
 

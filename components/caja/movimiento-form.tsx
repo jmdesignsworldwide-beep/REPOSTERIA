@@ -104,7 +104,7 @@ export function MovimientoForm({
           className={inputCls}
           value={concepto}
           onChange={(e) => setConcepto(e.target.value)}
-          placeholder={tipo === "ingreso" ? "Venta de mostrador…" : "Compra de insumos…"}
+          placeholder={tipo === "ingreso" ? "Venta de mostrador…" : "Compra de ingredientes…"}
           required
         />
       </label>
