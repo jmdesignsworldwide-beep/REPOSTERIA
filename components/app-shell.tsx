@@ -32,7 +32,7 @@ const NAV: NavItem[] = [
   { label: "Reportes", icon: BarChart3, href: "/reportes" },
   { label: "Catálogo", icon: Cake, href: "/catalogo" },
   { label: "Recetas", icon: ChefHat, href: "/recetas" },
-  { label: "Insumos", icon: Package, href: "/inventario" },
+  { label: "Inventario", icon: Package, href: "/inventario" },
   { label: "Empleados", icon: Contact, href: "/empleados" },
   { label: "Accesos", icon: ShieldCheck, href: "/admin", adminOnly: true },
 ];

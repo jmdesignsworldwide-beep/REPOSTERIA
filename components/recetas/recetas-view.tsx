@@ -126,7 +126,7 @@ export function RecetasView() {
                 href="/inventario"
                 className="flex-1 rounded-xl border border-foreground/15 bg-glass/60 px-3 py-2 text-center text-sm font-medium backdrop-blur transition-colors hover:border-primary/40"
               >
-                📦 Ingredientes en Insumos
+                📦 Ingredientes en Inventario
               </Link>
             </div>
           </div>
