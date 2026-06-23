@@ -19,7 +19,7 @@ export interface Proveedor {
   nombre: string;
   contacto: string;
   telefono: string;
-  categoria: "Insumos" | "Empaques" | "Decoración";
+  categoria: "Ingredientes" | "Empaques" | "Decoración";
   pagos: "al_dia" | "pendiente";
   balancePendiente: number;
   compras: CompraProv[];
@@ -32,7 +32,7 @@ export const PROVEEDORES: Proveedor[] = [
     nombre: "Distribuidora La Famosa",
     contacto: "Ana Beltré",
     telefono: "809-540-1122",
-    categoria: "Insumos",
+    categoria: "Ingredientes",
     pagos: "al_dia",
     balancePendiente: 0,
     compras: [
@@ -48,7 +48,7 @@ export const PROVEEDORES: Proveedor[] = [
     nombre: "Supermercado Nacional",
     contacto: "Departamento de ventas",
     telefono: "809-565-7777",
-    categoria: "Insumos",
+    categoria: "Ingredientes",
     pagos: "pendiente",
     balancePendiente: 3200,
     compras: [
@@ -64,7 +64,7 @@ export const PROVEEDORES: Proveedor[] = [
     nombre: "Granja Los Cocos",
     contacto: "Ramón Tavárez",
     telefono: "829-330-4456",
-    categoria: "Insumos",
+    categoria: "Ingredientes",
     pagos: "al_dia",
     balancePendiente: 0,
     compras: [

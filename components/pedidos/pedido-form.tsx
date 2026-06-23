@@ -106,7 +106,7 @@ export function PedidoForm({
       {/* Renglones */}
       <div className="space-y-2">
         <div className="flex items-center justify-between">
-          <span className="text-sm font-medium">Renglones *</span>
+          <span className="text-sm font-medium">Productos *</span>
           <button
             type="button"
             onClick={addItem}
@@ -245,13 +245,13 @@ export function PedidoForm({
           <p className="tabular-nums font-semibold">{fmtRD(total)}</p>
         </div>
         <div className="rounded-xl border border-foreground/10 bg-foreground/[0.03] p-2.5">
-          <p className="text-xs text-muted">{pedido ? "Abonado" : "Abono inicial"}</p>
+          <p className="text-xs text-muted">{pedido ? "Pagado" : "Pago inicial"}</p>
           <p className="tabular-nums font-semibold text-emerald-600 dark:text-emerald-400">
             {fmtRD(abonado)}
           </p>
         </div>
         <div className="rounded-xl border border-foreground/10 bg-foreground/[0.03] p-2.5">
-          <p className="text-xs text-muted">Balance</p>
+          <p className="text-xs text-muted">Pendiente</p>
           <p className="tabular-nums font-semibold text-primary">
             {fmtRD(balance)}
           </p>

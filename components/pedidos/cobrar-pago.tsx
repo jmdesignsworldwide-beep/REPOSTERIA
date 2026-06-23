@@ -43,9 +43,9 @@ export function CobrarPagoForm({
   return (
     <form onSubmit={submit} className="space-y-4">
       <p className="text-sm text-muted">
-        Balance pendiente:{" "}
+        Pendiente por pagar:{" "}
         <span className="font-medium text-foreground">{fmtRD(balance)}</span>.
-        El pago entra como ingreso en la caja del día.
+        El pago entra como entrada en la caja del día.
       </p>
 
       <label className="block space-y-1.5">

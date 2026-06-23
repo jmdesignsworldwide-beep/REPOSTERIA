@@ -9,7 +9,7 @@ export default async function CajaPage() {
 
   const { data } = await supabase
     .from("movimientos_caja")
-    .select("*, pedido:pedidos(id,numero)")
+    .select("*, pedido:pedidos(id,numero,cliente:clientes(nombre))")
     .order("created_at", { ascending: false })
     .limit(500);
 

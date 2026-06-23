@@ -68,7 +68,7 @@ export function ReportesView() {
         {/* KPIs */}
         <div className="grid grid-cols-3 gap-4">
           {[
-            { label: "Ingresos (6 meses)", value: ingresosSemestre, prefix: "RD$ ", cls: "text-emerald-600 dark:text-emerald-400" },
+            { label: "Entradas (6 meses)", value: ingresosSemestre, prefix: "RD$ ", cls: "text-emerald-600 dark:text-emerald-400" },
             { label: "Costos (6 meses)", value: costosSemestre, prefix: "RD$ ", cls: "text-red-600 dark:text-red-400" },
             { label: "Margen", value: margen, prefix: "", suffix: "%", cls: "text-primary" },
           ].map((k) => (
@@ -88,7 +88,7 @@ export function ReportesView() {
           <StaggerItem className="lg:col-span-2">
             <GlassCard className="p-5">
               <h2 className="mb-4 font-display text-lg font-semibold">
-                Ingresos por período
+                Entradas por período
               </h2>
               <div className="h-64 w-full">
                 <ResponsiveContainer width="100%" height="100%">
@@ -107,7 +107,7 @@ export function ReportesView() {
                     <YAxis tick={{ fill: ejeColor, fontSize: 11 }} axisLine={false} tickLine={false} width={48}
                       tickFormatter={(v) => `${(v as number) / 1000}k`} />
                     <Tooltip contentStyle={tipStyle} formatter={(v) => fmtRD(Number(v))} />
-                    <Area type="monotone" dataKey="ingresos" stroke="#A85F52" strokeWidth={2} fill="url(#gIng)" isAnimationActive={anim} name="Ingresos" />
+                    <Area type="monotone" dataKey="ingresos" stroke="#A85F52" strokeWidth={2} fill="url(#gIng)" isAnimationActive={anim} name="Entradas" />
                     <Area type="monotone" dataKey="costos" stroke="#C98A6E" strokeWidth={2} fill="url(#gCost)" isAnimationActive={anim} name="Costos" />
                   </AreaChart>
                 </ResponsiveContainer>

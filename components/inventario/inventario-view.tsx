@@ -19,7 +19,7 @@ import type { CategoriaInv, ItemInventario } from "@/lib/data/inventario";
 
 type Filtro = "Todos" | CategoriaInv;
 
-export function InventarioView() {
+export function InventarioView({ embedded = false }: { embedded?: boolean }) {
   const [filtro, setFiltro] = useState<Filtro>("Todos");
   const [sel, setSel] = useState<ItemInventario | null>(null);
 
@@ -35,15 +35,17 @@ export function InventarioView() {
 
   return (
     <>
-      <Stagger className="mx-auto max-w-5xl space-y-6">
-        <StaggerItem>
-          <h1 className="font-display text-3xl font-bold tracking-tight sm:text-4xl">
-            Inventario
-          </h1>
-          <p className="mt-1 text-sm text-muted">
-            Ingredientes, empaques y decoración
-          </p>
-        </StaggerItem>
+      <Stagger className={embedded ? "space-y-6" : "mx-auto max-w-5xl space-y-6"}>
+        {!embedded && (
+          <StaggerItem>
+            <h1 className="font-display text-3xl font-bold tracking-tight sm:text-4xl">
+              Inventario
+            </h1>
+            <p className="mt-1 text-sm text-muted">
+              Ingredientes, empaques y decoración
+            </p>
+          </StaggerItem>
+        )}
 
         {/* KPIs */}
         <div className="grid grid-cols-3 gap-4">
@@ -144,7 +146,7 @@ export function InventarioView() {
 
           <StaggerItem>
             <GlassCard className="p-5">
-              <h2 className="mb-4 font-display text-lg font-semibold">Mermas y desperdicios</h2>
+              <h2 className="mb-4 font-display text-lg font-semibold">Desperdicios</h2>
               <div className="space-y-2">
                 {MERMAS.map((m, idx) => (
                   <div key={idx} className="flex items-center justify-between rounded-lg border border-foreground/5 bg-foreground/[0.03] px-3 py-2 text-sm">
@@ -237,7 +239,7 @@ function DetalleItem({ item }: { item: ItemInventario }) {
 
       {mermas.length > 0 && (
         <div>
-          <p className="mb-2 text-xs font-medium text-muted">Mermas</p>
+          <p className="mb-2 text-xs font-medium text-muted">Desperdicios</p>
           <div className="space-y-1.5">
             {mermas.map((m, i) => (
               <div key={i} className="rounded-lg border border-foreground/5 bg-foreground/[0.03] px-3 py-2 text-sm">

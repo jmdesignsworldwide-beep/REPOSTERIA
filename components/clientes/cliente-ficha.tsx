@@ -136,7 +136,7 @@ export function ClienteFicha({ cliente }: { cliente: Cliente }) {
           </p>
         </div>
         <div className="rounded-xl border border-foreground/10 bg-foreground/[0.03] p-3">
-          <p className="text-xs text-muted">Balance</p>
+          <p className="text-xs text-muted">Pendiente</p>
           <p className="tabular-nums font-semibold text-primary">
             {pedidos === null ? "…" : fmtRD(balance)}
           </p>

@@ -1,5 +1,5 @@
-import { InventarioView } from "@/components/inventario/inventario-view";
+import { InsumosView } from "@/components/insumos/insumos-view";
 
-export default function InventarioPage() {
-  return <InventarioView />;
+export default function InsumosPage() {
+  return <InsumosView />;
 }
