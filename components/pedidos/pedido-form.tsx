@@ -21,15 +21,17 @@ const itemVacio: PedidoItem = {
 export function PedidoForm({
   clientes,
   pedido,
+  fechaInicial,
   onSave,
 }: {
   clientes: Cliente[];
   pedido?: Pedido;
+  fechaInicial?: string;
   onSave: (input: PedidoInput) => Promise<{ ok: boolean; error?: string }>;
 }) {
   const [clienteId, setClienteId] = useState(pedido?.cliente_id ?? "");
   const [ocasion, setOcasion] = useState(pedido?.ocasion ?? "");
-  const [fecha, setFecha] = useState(pedido?.fecha_entrega ?? "");
+  const [fecha, setFecha] = useState(pedido?.fecha_entrega ?? fechaInicial ?? "");
   const [hora, setHora] = useState(pedido?.hora_entrega ?? "");
   const [estado, setEstado] = useState<EstadoPedido>(
     pedido?.estado ?? "pendiente",
