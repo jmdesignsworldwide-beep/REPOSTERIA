@@ -103,11 +103,19 @@ export function CajaView({ initial }: { initial: Movimiento[] }) {
                 {rango === "dia" ? hoyStr() : `desde ${desde}`}
               </p>
             </div>
-            <div className="flex gap-2">
+            <div className="flex flex-wrap gap-2">
               <Magnetic strength={0.2}>
+                <Link
+                  href="/pos"
+                  className="rounded-full bg-primary px-4 py-2.5 text-sm font-semibold text-primary-foreground shadow-glow"
+                >
+                  ⚡ Venta rápida
+                </Link>
+              </Magnetic>
+              <Magnetic strength={0.2} glow={false}>
                 <button
                   onClick={() => setModal({ type: "nuevo", tipo: "ingreso" })}
-                  className="rounded-full bg-emerald-600 px-4 py-2.5 text-sm font-semibold text-white shadow-glow"
+                  className="rounded-full bg-emerald-600 px-4 py-2.5 text-sm font-semibold text-white"
                 >
                   + Ingreso
                 </button>

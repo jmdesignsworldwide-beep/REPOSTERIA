@@ -16,6 +16,7 @@ import {
   MapPin,
   BarChart3,
   ShieldCheck,
+  Zap,
   type LucideIcon,
 } from "lucide-react";
 import { ThemeToggle } from "./theme-toggle";
@@ -27,6 +28,7 @@ const NAV: NavItem[] = [
   { label: "Pedidos", icon: ClipboardList, href: "/pedidos" },
   { label: "Calendario", icon: CalendarDays, href: "/calendario" },
   { label: "Clientes", icon: Users, href: "/clientes" },
+  { label: "Venta rápida", icon: Zap, href: "/pos" },
   { label: "Caja", icon: Wallet, href: "/caja" },
   { label: "Entregas", icon: MapPin, href: "/entregas" },
   { label: "Reportes", icon: BarChart3, href: "/reportes" },
