@@ -16,7 +16,7 @@ const ORDEN_CLS: Record<EstadoOrden, string> = {
   cancelada: "bg-foreground/10 text-muted",
 };
 
-export function ProveedoresView() {
+export function ProveedoresView({ embedded = false }: { embedded?: boolean }) {
   const [sel, setSel] = useState<Proveedor | null>(null);
 
   const pendientes = PROVEEDORES.filter((p) => p.pagos === "pendiente").length;
@@ -24,15 +24,17 @@ export function ProveedoresView() {
 
   return (
     <>
-      <Stagger className="mx-auto max-w-5xl space-y-6">
-        <StaggerItem>
-          <h1 className="font-display text-3xl font-bold tracking-tight sm:text-4xl">
-            Proveedores
-          </h1>
-          <p className="mt-1 text-sm text-muted">
-            Compras, pagos y órdenes de compra
-          </p>
-        </StaggerItem>
+      <Stagger className={embedded ? "space-y-6" : "mx-auto max-w-5xl space-y-6"}>
+        {!embedded && (
+          <StaggerItem>
+            <h1 className="font-display text-3xl font-bold tracking-tight sm:text-4xl">
+              Proveedores
+            </h1>
+            <p className="mt-1 text-sm text-muted">
+              Compras, pagos y órdenes de compra
+            </p>
+          </StaggerItem>
+        )}
 
         <div className="grid grid-cols-3 gap-4">
           {[

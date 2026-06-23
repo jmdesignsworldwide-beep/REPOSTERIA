@@ -18,7 +18,11 @@ export interface Movimiento {
   fecha: string; // YYYY-MM-DD
   anulado: boolean;
   created_at: string;
-  pedido?: { id: string; numero: number } | null;
+  pedido?: {
+    id: string;
+    numero: number;
+    cliente?: { nombre: string } | null;
+  } | null;
 }
 
 export type MovimientoInput = {

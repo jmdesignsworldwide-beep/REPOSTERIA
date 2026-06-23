@@ -19,7 +19,7 @@ import type { CategoriaInv, ItemInventario } from "@/lib/data/inventario";
 
 type Filtro = "Todos" | CategoriaInv;
 
-export function InventarioView() {
+export function InventarioView({ embedded = false }: { embedded?: boolean }) {
   const [filtro, setFiltro] = useState<Filtro>("Todos");
   const [sel, setSel] = useState<ItemInventario | null>(null);
 
@@ -35,15 +35,17 @@ export function InventarioView() {
 
   return (
     <>
-      <Stagger className="mx-auto max-w-5xl space-y-6">
-        <StaggerItem>
-          <h1 className="font-display text-3xl font-bold tracking-tight sm:text-4xl">
-            Inventario
-          </h1>
-          <p className="mt-1 text-sm text-muted">
-            Ingredientes, empaques y decoración
-          </p>
-        </StaggerItem>
+      <Stagger className={embedded ? "space-y-6" : "mx-auto max-w-5xl space-y-6"}>
+        {!embedded && (
+          <StaggerItem>
+            <h1 className="font-display text-3xl font-bold tracking-tight sm:text-4xl">
+              Inventario
+            </h1>
+            <p className="mt-1 text-sm text-muted">
+              Ingredientes, empaques y decoración
+            </p>
+          </StaggerItem>
+        )}
 
         {/* KPIs */}
         <div className="grid grid-cols-3 gap-4">

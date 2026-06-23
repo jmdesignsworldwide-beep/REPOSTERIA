@@ -18,6 +18,7 @@ import {
   type TipoMov,
 } from "@/lib/caja/types";
 import { MovimientoForm } from "./movimiento-form";
+import { PagosPanel } from "./pagos-panel";
 import { anularMovimiento } from "@/app/(app)/caja/actions";
 
 type Rango = "dia" | "semana" | "mes";
@@ -47,6 +48,7 @@ function desdeStr(rango: Rango) {
 export function CajaView({ initial }: { initial: Movimiento[] }) {
   const router = useRouter();
   const [rango, setRango] = useState<Rango>("dia");
+  const [vista, setVista] = useState<"movimientos" | "pagos">("movimientos");
   const [modal, setModal] = useState<ModalState>(null);
   const [pending, startTransition] = useTransition();
 
@@ -140,25 +142,50 @@ export function CajaView({ initial }: { initial: Movimiento[] }) {
           ))}
         </div>
 
-        {/* Filtro */}
+        {/* Filtros: rango de fechas + vista */}
         <StaggerItem>
-          <div className="inline-flex rounded-xl border border-foreground/10 bg-glass/50 p-1 backdrop-blur">
-            {RANGOS.map((r) => (
-              <button
-                key={r.id}
-                onClick={() => setRango(r.id)}
-                className={`rounded-lg px-4 py-1.5 text-sm font-medium transition-colors ${
-                  rango === r.id
-                    ? "bg-primary text-primary-foreground"
-                    : "text-muted hover:text-foreground"
-                }`}
-              >
-                {r.label}
-              </button>
-            ))}
+          <div className="flex flex-wrap items-center gap-3">
+            <div className="inline-flex rounded-xl border border-foreground/10 bg-glass/50 p-1 backdrop-blur">
+              {RANGOS.map((r) => (
+                <button
+                  key={r.id}
+                  onClick={() => setRango(r.id)}
+                  className={`rounded-lg px-4 py-1.5 text-sm font-medium transition-colors ${
+                    rango === r.id
+                      ? "bg-primary text-primary-foreground"
+                      : "text-muted hover:text-foreground"
+                  }`}
+                >
+                  {r.label}
+                </button>
+              ))}
+            </div>
+            <div className="inline-flex rounded-xl border border-foreground/10 bg-glass/50 p-1 backdrop-blur">
+              {(
+                [
+                  { id: "movimientos", label: "💸 Movimientos" },
+                  { id: "pagos", label: "🧾 Pagos y recibos" },
+                ] as const
+              ).map((v) => (
+                <button
+                  key={v.id}
+                  onClick={() => setVista(v.id)}
+                  className={`rounded-lg px-4 py-1.5 text-sm font-medium transition-colors ${
+                    vista === v.id
+                      ? "bg-primary text-primary-foreground"
+                      : "text-muted hover:text-foreground"
+                  }`}
+                >
+                  {v.label}
+                </button>
+              ))}
+            </div>
           </div>
         </StaggerItem>
 
+        {vista === "pagos" ? (
+          <PagosPanel movimientos={lista} />
+        ) : (
         <div className="grid gap-6 lg:grid-cols-3">
           {/* Lista */}
           <StaggerItem className="lg:col-span-2">
@@ -243,6 +270,7 @@ export function CajaView({ initial }: { initial: Movimiento[] }) {
             </GlassCard>
           </StaggerItem>
         </div>
+        )}
       </Stagger>
 
       {/* Nuevo */}

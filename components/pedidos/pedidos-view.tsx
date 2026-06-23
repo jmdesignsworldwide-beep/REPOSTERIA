@@ -13,6 +13,7 @@ import type { Cliente } from "@/lib/clientes/types";
 import { PedidoForm } from "./pedido-form";
 import { EstadoBadge, PedidoDetalle } from "./pedido-detalle";
 import { CobrarPagoForm } from "./cobrar-pago";
+import { PedidosTablero } from "./pedidos-tablero";
 import { SignedImg } from "@/components/ui/signed-img";
 import {
   actualizarPedido,
@@ -39,10 +40,13 @@ export function PedidosView({
   clientes: Cliente[];
 }) {
   const router = useRouter();
+  const [vista, setVista] = useState<"lista" | "tablero">("lista");
   const [busqueda, setBusqueda] = useState("");
   const [filtro, setFiltro] = useState<Filtro>("todos");
   const [modal, setModal] = useState<ModalState>(null);
   const [pending, startTransition] = useTransition();
+
+  const activos = useMemo(() => initial.filter((p) => p.activo), [initial]);
 
   const lista = useMemo(() => {
     const q = busqueda.trim().toLowerCase();
@@ -119,7 +123,7 @@ export function PedidosView({
                 Pedidos
               </h1>
               <p className="mt-1 text-sm text-muted">
-                {lista.length} pedidos activos
+                {activos.length} pedidos activos
               </p>
             </div>
             <Magnetic strength={0.2}>
@@ -133,6 +137,37 @@ export function PedidosView({
           </div>
         </StaggerItem>
 
+        {/* Selector de vista: Lista o Tablero (kanban de producción) */}
+        <StaggerItem>
+          <div className="inline-flex rounded-xl border border-foreground/10 bg-glass/50 p-1 backdrop-blur">
+            {(
+              [
+                { id: "lista", label: "📋 Lista" },
+                { id: "tablero", label: "🗂️ Tablero" },
+              ] as const
+            ).map((v) => (
+              <button
+                key={v.id}
+                onClick={() => setVista(v.id)}
+                className={`rounded-lg px-4 py-1.5 text-sm font-medium transition-colors ${
+                  vista === v.id
+                    ? "bg-primary text-primary-foreground"
+                    : "text-muted hover:text-foreground"
+                }`}
+              >
+                {v.label}
+              </button>
+            ))}
+          </div>
+        </StaggerItem>
+
+        {vista === "tablero" ? (
+          <PedidosTablero
+            pedidos={activos}
+            onAbrir={(p) => setModal({ type: "detalle", pedido: p })}
+          />
+        ) : (
+          <>
         <StaggerItem>
           <div className="flex flex-col gap-3 sm:flex-row sm:items-center">
             <input
@@ -223,6 +258,8 @@ export function PedidosView({
               </StaggerItem>
             ))}
           </Stagger>
+        )}
+          </>
         )}
       </Stagger>
 
