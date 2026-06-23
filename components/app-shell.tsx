@@ -19,7 +19,6 @@ import {
   MapPin,
   BarChart3,
   ShieldCheck,
-  Settings,
   type LucideIcon,
 } from "lucide-react";
 import { ThemeToggle } from "./theme-toggle";
@@ -42,7 +41,6 @@ const NAV: NavItem[] = [
   { label: "Producción", icon: Factory, href: "/produccion" },
   { label: "Empleados", icon: Contact, href: "/empleados" },
   { label: "Accesos", icon: ShieldCheck, href: "/admin", adminOnly: true },
-  { label: "Ajustes", icon: Settings, href: "/ajustes" },
 ];
 
 export function AppShell({

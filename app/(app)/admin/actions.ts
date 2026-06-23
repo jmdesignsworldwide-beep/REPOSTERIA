@@ -12,6 +12,29 @@ async function requireAdmin() {
   return rol === "admin";
 }
 
+/**
+ * Cambia la contraseña de la PROPIA cuenta de admin que está en sesión.
+ * El id se toma de la sesión validada por el middleware (headers x-ac-*),
+ * nunca del cliente, así que un admin solo puede cambiar su propia clave.
+ * La nueva contraseña la hashea GoTrue; nunca se guarda ni se loguea en claro.
+ */
+export async function cambiarMiPassword(input: {
+  password: string;
+}): Promise<Result> {
+  const { rol, userId } = await getAcceso();
+  if (rol !== "admin" || !userId) return { ok: false, error: "No autorizado." };
+  if (input.password.length < 8)
+    return { ok: false, error: "La contraseña debe tener al menos 8 caracteres." };
+
+  const admin = createAdminClient();
+  const { error } = await admin.auth.admin.updateUserById(userId, {
+    password: input.password,
+  });
+  if (error) return { ok: false, error: error.message };
+
+  return { ok: true };
+}
+
 function expiraDesde(base: Date, dias: number | null): string | null {
   if (dias === null) return null;
   return new Date(base.getTime() + dias * 86400000).toISOString();

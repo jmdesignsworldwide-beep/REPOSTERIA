@@ -8,6 +8,7 @@ import { GlassCard } from "@/components/ui/glass-card";
 import { Modal } from "@/components/ui/modal";
 import {
   cambiarActivoCuenta,
+  cambiarMiPassword,
   crearCuenta,
   renovarCuenta,
 } from "@/app/(app)/admin/actions";
@@ -40,6 +41,12 @@ export function AdminView({ initial }: { initial: Cuenta[] }) {
   const [renovar, setRenovar] = useState<Cuenta | null>(null);
   const [renovarDias, setRenovarDias] = useState(7);
 
+  // Cambiar mi contraseña (admin en sesión)
+  const [pw1, setPw1] = useState("");
+  const [pw2, setPw2] = useState("");
+  const [pwSaving, setPwSaving] = useState(false);
+  const [pwMsg, setPwMsg] = useState<{ ok: boolean; text: string } | null>(null);
+
   function refrescar() {
     router.refresh();
   }
@@ -67,6 +74,32 @@ export function AdminView({ initial }: { initial: Cuenta[] }) {
       await renovarCuenta(renovar.id, renovarDias);
       setRenovar(null);
       refrescar();
+    });
+  }
+
+  async function onCambiarPassword(e: React.FormEvent) {
+    e.preventDefault();
+    setPwMsg(null);
+    if (pw1.length < 8) {
+      setPwMsg({ ok: false, text: "La contraseña debe tener al menos 8 caracteres." });
+      return;
+    }
+    if (pw1 !== pw2) {
+      setPwMsg({ ok: false, text: "Las contraseñas no coinciden." });
+      return;
+    }
+    setPwSaving(true);
+    const res = await cambiarMiPassword({ password: pw1 });
+    setPwSaving(false);
+    if (!res.ok) {
+      setPwMsg({ ok: false, text: res.error });
+      return;
+    }
+    setPw1("");
+    setPw2("");
+    setPwMsg({
+      ok: true,
+      text: "Contraseña actualizada. Úsala la próxima vez que inicies sesión.",
     });
   }
 
@@ -251,6 +284,79 @@ export function AdminView({ initial }: { initial: Cuenta[] }) {
                 })}
               </Stagger>
             )}
+          </GlassCard>
+        </StaggerItem>
+
+        {/* Cambiar mi contraseña (admin) */}
+        <StaggerItem>
+          <GlassCard className="p-5">
+            <h2 className="mb-1 font-display text-lg font-semibold">
+              Cambiar mi contraseña
+            </h2>
+            <p className="mb-4 text-sm text-muted">
+              Actualiza la contraseña de tu cuenta de administrador. Elígela
+              privada y no la compartas con nadie.
+            </p>
+            <form onSubmit={onCambiarPassword} className="space-y-4">
+              {/* Usuario oculto para los gestores de contraseñas */}
+              <input
+                type="text"
+                name="username"
+                autoComplete="username"
+                defaultValue="johann"
+                readOnly
+                className="hidden"
+              />
+              <div className="grid gap-3 sm:grid-cols-2">
+                <label className="block space-y-1.5">
+                  <span className="text-sm font-medium">Nueva contraseña</span>
+                  <input
+                    type="password"
+                    autoComplete="new-password"
+                    className={inputCls}
+                    value={pw1}
+                    onChange={(e) => setPw1(e.target.value)}
+                    placeholder="mínimo 8 caracteres"
+                    required
+                  />
+                </label>
+                <label className="block space-y-1.5">
+                  <span className="text-sm font-medium">Repetir contraseña</span>
+                  <input
+                    type="password"
+                    autoComplete="new-password"
+                    className={inputCls}
+                    value={pw2}
+                    onChange={(e) => setPw2(e.target.value)}
+                    placeholder="repite la nueva contraseña"
+                    required
+                  />
+                </label>
+              </div>
+
+              {pwMsg && (
+                <div
+                  className={`rounded-xl border px-3 py-2 text-sm ${
+                    pwMsg.ok
+                      ? "border-emerald-500/30 bg-emerald-500/10 text-emerald-700 dark:text-emerald-400"
+                      : "border-red-500/30 bg-red-500/10 text-red-600 dark:text-red-400"
+                  }`}
+                >
+                  {pwMsg.ok ? "✅ " : "⚠️ "}
+                  {pwMsg.text}
+                </div>
+              )}
+
+              <Magnetic strength={0.18}>
+                <button
+                  type="submit"
+                  disabled={pwSaving}
+                  className="rounded-xl bg-primary px-5 py-2.5 text-sm font-semibold text-primary-foreground shadow-glow disabled:opacity-60"
+                >
+                  {pwSaving ? "Guardando…" : "Cambiar contraseña"}
+                </button>
+              </Magnetic>
+            </form>
           </GlassCard>
         </StaggerItem>
       </Stagger>
