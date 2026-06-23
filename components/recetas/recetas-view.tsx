@@ -1,14 +1,17 @@
 "use client";
 
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import Link from "next/link";
 import { Stagger, StaggerItem } from "@/components/ui/stagger";
 import { Magnetic } from "@/components/ui/magnetic";
 import { GlassCard } from "@/components/ui/glass-card";
 import { Modal } from "@/components/ui/modal";
+import { SearchInput, Chips } from "@/components/ui/controls";
 import { fmtRD } from "@/lib/data/mock";
 import { RECETAS, costoReceta, margenReceta } from "@/lib/data/recetas";
 import type { Receta } from "@/lib/data/recetas";
+
+type FiltroMargen = "todos" | "alto" | "medio" | "bajo";
 
 function margenCls(m: number) {
   if (m >= 60) return "bg-emerald-500/15 text-emerald-600 dark:text-emerald-400";
@@ -18,10 +21,36 @@ function margenCls(m: number) {
 
 export function RecetasView() {
   const [sel, setSel] = useState<Receta | null>(null);
+  const [busqueda, setBusqueda] = useState("");
+  const [filtro, setFiltro] = useState<FiltroMargen>("todos");
+
+  const lista = useMemo(() => {
+    const q = busqueda.trim().toLowerCase();
+    return RECETAS.filter((r) => {
+      const m = margenReceta(r);
+      const banda =
+        filtro === "todos" ||
+        (filtro === "alto" && m >= 60) ||
+        (filtro === "medio" && m >= 40 && m < 60) ||
+        (filtro === "bajo" && m < 40);
+      const match =
+        !q ||
+        r.nombre.toLowerCase().includes(q) ||
+        r.ingredientes.some((i) => i.nombre.toLowerCase().includes(q));
+      return banda && match;
+    });
+  }, [busqueda, filtro]);
+
+  const FILTROS: { id: FiltroMargen; label: string; dot?: string }[] = [
+    { id: "todos", label: "Todos" },
+    { id: "alto", label: "Margen alto", dot: "bg-emerald-500" },
+    { id: "medio", label: "Medio", dot: "bg-amber-500" },
+    { id: "bajo", label: "Bajo", dot: "bg-red-500" },
+  ];
 
   return (
     <>
-      <Stagger className="mx-auto max-w-5xl space-y-6">
+      <Stagger className="mx-auto max-w-5xl space-y-5">
         <StaggerItem>
           <h1 className="font-display text-3xl font-bold tracking-tight sm:text-4xl">
             Recetas
@@ -31,8 +60,27 @@ export function RecetasView() {
           </p>
         </StaggerItem>
 
+        <StaggerItem>
+          <div className="space-y-3">
+            <SearchInput
+              value={busqueda}
+              onChange={setBusqueda}
+              placeholder="Buscar receta o ingrediente…"
+            />
+            <Chips options={FILTROS} value={filtro} onChange={setFiltro} />
+          </div>
+        </StaggerItem>
+
+        {lista.length === 0 && (
+          <StaggerItem>
+            <GlassCard className="p-10 text-center text-sm text-muted">
+              No hay recetas que coincidan.
+            </GlassCard>
+          </StaggerItem>
+        )}
+
         <Stagger className="grid gap-3 sm:grid-cols-2">
-          {RECETAS.map((r) => {
+          {lista.map((r) => {
             const costo = costoReceta(r);
             const margen = margenReceta(r);
             return (

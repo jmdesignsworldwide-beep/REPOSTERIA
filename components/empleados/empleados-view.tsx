@@ -1,14 +1,17 @@
 "use client";
 
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import { Stagger, StaggerItem } from "@/components/ui/stagger";
 import { Magnetic } from "@/components/ui/magnetic";
 import { GlassCard } from "@/components/ui/glass-card";
 import { Modal } from "@/components/ui/modal";
 import { CountUp } from "@/components/ui/count-up";
+import { SearchInput, Chips } from "@/components/ui/controls";
 import { fmtRD } from "@/lib/data/mock";
 import { ASISTENCIA_META, EMPLEADOS } from "@/lib/data/empleados";
-import type { Empleado } from "@/lib/data/empleados";
+import type { Asistencia, Empleado } from "@/lib/data/empleados";
+
+type FiltroAsist = "todos" | Asistencia;
 
 const TONOS = [
   "bg-amber-500/20 text-amber-700 dark:text-amber-300",
@@ -24,9 +27,29 @@ function iniciales(nombre: string) {
 
 export function EmpleadosView() {
   const [sel, setSel] = useState<Empleado | null>(null);
+  const [busqueda, setBusqueda] = useState("");
+  const [filtro, setFiltro] = useState<FiltroAsist>("todos");
 
   const presentes = EMPLEADOS.filter((e) => e.asistencia === "presente").length;
   const nomina = EMPLEADOS.reduce((s, e) => s + e.salario, 0);
+
+  const lista = useMemo(() => {
+    const q = busqueda.trim().toLowerCase();
+    return EMPLEADOS.filter(
+      (e) =>
+        (filtro === "todos" || e.asistencia === filtro) &&
+        (!q ||
+          e.nombre.toLowerCase().includes(q) ||
+          e.rol.toLowerCase().includes(q)),
+    );
+  }, [busqueda, filtro]);
+
+  const FILTROS: { id: FiltroAsist; label: string; dot?: string }[] = [
+    { id: "todos", label: "Todos" },
+    { id: "presente", label: "Presentes", dot: "bg-emerald-500" },
+    { id: "tarde", label: "Tarde", dot: "bg-amber-500" },
+    { id: "ausente", label: "Ausentes", dot: "bg-red-500" },
+  ];
 
   return (
     <>
@@ -57,8 +80,28 @@ export function EmpleadosView() {
           ))}
         </div>
 
+        {/* Controles */}
+        <StaggerItem>
+          <div className="space-y-3">
+            <SearchInput
+              value={busqueda}
+              onChange={setBusqueda}
+              placeholder="Buscar por nombre o rol…"
+            />
+            <Chips options={FILTROS} value={filtro} onChange={setFiltro} />
+          </div>
+        </StaggerItem>
+
+        {lista.length === 0 && (
+          <StaggerItem>
+            <GlassCard className="p-10 text-center text-sm text-muted">
+              No hay empleados que coincidan.
+            </GlassCard>
+          </StaggerItem>
+        )}
+
         <Stagger className="grid gap-3 sm:grid-cols-2">
-          {EMPLEADOS.map((e) => {
+          {lista.map((e) => {
             const a = ASISTENCIA_META[e.asistencia];
             return (
               <StaggerItem key={e.id}>

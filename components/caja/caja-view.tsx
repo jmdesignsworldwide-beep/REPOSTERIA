@@ -3,17 +3,28 @@
 import { useMemo, useState, useTransition } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
+import {
+  Bar,
+  BarChart,
+  ResponsiveContainer,
+  Tooltip,
+  XAxis,
+} from "recharts";
+import { useReducedMotion } from "framer-motion";
 import { Stagger, StaggerItem } from "@/components/ui/stagger";
 import { Magnetic } from "@/components/ui/magnetic";
 import { CountUp } from "@/components/ui/count-up";
 import { GlassCard } from "@/components/ui/glass-card";
 import { LiveDot } from "@/components/ui/live-dot";
 import { Modal } from "@/components/ui/modal";
+import { Chips } from "@/components/ui/controls";
+import { useTheme } from "@/components/theme-provider";
 import { fmtRD } from "@/lib/data/mock";
 import {
   METODOS,
   categoriaLabel,
   metodoLabel,
+  type MetodoPago,
   type Movimiento,
   type TipoMov,
 } from "@/lib/caja/types";
@@ -21,7 +32,9 @@ import { MovimientoForm } from "./movimiento-form";
 import { PagosPanel } from "./pagos-panel";
 import { anularMovimiento } from "@/app/(app)/caja/actions";
 
-type Rango = "dia" | "semana" | "mes";
+type Rango = "dia" | "semana" | "mes" | "personalizado";
+type TipoF = "todos" | TipoMov;
+type MetodoF = "todos" | MetodoPago;
 
 type ModalState =
   | { type: "nuevo"; tipo: TipoMov }
@@ -47,13 +60,19 @@ function desdeStr(rango: Rango) {
 
 export function CajaView({ initial }: { initial: Movimiento[] }) {
   const router = useRouter();
+  const reduce = useReducedMotion();
+  const { theme } = useTheme();
   const [rango, setRango] = useState<Rango>("dia");
   const [vista, setVista] = useState<"movimientos" | "pagos">("movimientos");
+  const [tipoF, setTipoF] = useState<TipoF>("todos");
+  const [metodoF, setMetodoF] = useState<MetodoF>("todos");
+  const [cDesde, setCDesde] = useState(hoyStr());
+  const [cHasta, setCHasta] = useState(hoyStr());
   const [modal, setModal] = useState<ModalState>(null);
   const [pending, startTransition] = useTransition();
 
-  const desde = desdeStr(rango);
-  const hasta = hoyStr();
+  const desde = rango === "personalizado" ? cDesde : desdeStr(rango);
+  const hasta = rango === "personalizado" ? cHasta : hoyStr();
 
   const lista = useMemo(
     () =>
@@ -63,7 +82,34 @@ export function CajaView({ initial }: { initial: Movimiento[] }) {
     [initial, desde, hasta],
   );
 
+  // Lista mostrada (aplica tipo + método). Los totales/flujo usan el período completo.
+  const listaMostrada = useMemo(
+    () =>
+      lista.filter(
+        (m) =>
+          (tipoF === "todos" || m.tipo === tipoF) &&
+          (metodoF === "todos" || m.metodo === metodoF),
+      ),
+    [lista, tipoF, metodoF],
+  );
+
   const vivos = lista.filter((m) => !m.anulado);
+
+  // Flujo del período: entradas vs salidas por día (mini-gráfico).
+  const flujo = useMemo(() => {
+    const map = new Map<string, { fecha: string; entradas: number; salidas: number }>();
+    for (const m of vivos) {
+      const row = map.get(m.fecha) ?? { fecha: m.fecha, entradas: 0, salidas: 0 };
+      if (m.tipo === "ingreso") row.entradas += Number(m.monto);
+      else row.salidas += Number(m.monto);
+      map.set(m.fecha, row);
+    }
+    return [...map.values()]
+      .sort((a, b) => a.fecha.localeCompare(b.fecha))
+      .map((r) => ({ ...r, dia: r.fecha.slice(8) }));
+  }, [vivos]);
+  const ejeColor = theme === "dark" ? "#a89890" : "#7c6a5e";
+  const tipBg = theme === "dark" ? "#1f1714" : "#fffaf4";
   const ingresos = vivos.filter((m) => m.tipo === "ingreso").reduce((s, m) => s + Number(m.monto), 0);
   const egresos = vivos.filter((m) => m.tipo === "egreso").reduce((s, m) => s + Number(m.monto), 0);
   const neto = ingresos - egresos;
@@ -87,6 +133,16 @@ export function CajaView({ initial }: { initial: Movimiento[] }) {
     { id: "dia", label: "Día" },
     { id: "semana", label: "Semana" },
     { id: "mes", label: "Mes" },
+    { id: "personalizado", label: "Personalizado" },
+  ];
+  const TIPOS: { id: TipoF; label: string; dot?: string }[] = [
+    { id: "todos", label: "Todo" },
+    { id: "ingreso", label: "Entradas", dot: "bg-emerald-500" },
+    { id: "egreso", label: "Salidas", dot: "bg-red-500" },
+  ];
+  const METODOS_F: { id: MetodoF; label: string }[] = [
+    { id: "todos", label: "Todo método" },
+    ...METODOS.map((m) => ({ id: m.id as MetodoF, label: m.label })),
   ];
 
   return (
@@ -188,12 +244,86 @@ export function CajaView({ initial }: { initial: Movimiento[] }) {
                 </button>
               ))}
             </div>
+            {rango === "personalizado" && (
+              <div className="flex items-center gap-2 text-sm">
+                <input
+                  type="date"
+                  value={cDesde}
+                  max={cHasta}
+                  onChange={(e) => setCDesde(e.target.value)}
+                  className="rounded-xl border border-foreground/15 bg-background/60 px-3 py-2 outline-none backdrop-blur focus:border-primary"
+                />
+                <span className="text-muted">–</span>
+                <input
+                  type="date"
+                  value={cHasta}
+                  min={cDesde}
+                  onChange={(e) => setCHasta(e.target.value)}
+                  className="rounded-xl border border-foreground/15 bg-background/60 px-3 py-2 outline-none backdrop-blur focus:border-primary"
+                />
+              </div>
+            )}
           </div>
         </StaggerItem>
 
         {vista === "pagos" ? (
           <PagosPanel movimientos={lista} />
         ) : (
+        <>
+        {/* Mini-gráfico del flujo del período */}
+        {flujo.length > 0 && (
+          <StaggerItem>
+            <GlassCard className="p-5">
+              <div className="mb-3 flex items-center justify-between">
+                <h2 className="font-display text-lg font-semibold">
+                  Flujo del período
+                </h2>
+                <span className="flex items-center gap-3 text-xs text-muted">
+                  <span className="flex items-center gap-1">
+                    <span className="h-2 w-2 rounded-full bg-emerald-500" /> Entradas
+                  </span>
+                  <span className="flex items-center gap-1">
+                    <span className="h-2 w-2 rounded-full bg-red-500" /> Salidas
+                  </span>
+                </span>
+              </div>
+              <div className="h-44 w-full">
+                <ResponsiveContainer width="100%" height="100%">
+                  <BarChart data={flujo} margin={{ left: -18, right: 4, top: 4 }}>
+                    <XAxis
+                      dataKey="dia"
+                      tick={{ fill: ejeColor, fontSize: 11 }}
+                      axisLine={false}
+                      tickLine={false}
+                    />
+                    <Tooltip
+                      cursor={{ fill: "rgba(150,120,90,0.08)" }}
+                      contentStyle={{
+                        background: tipBg,
+                        border: "1px solid rgba(150,120,90,0.25)",
+                        borderRadius: 12,
+                        fontSize: 12,
+                      }}
+                      formatter={(v) => fmtRD(Number(v))}
+                    />
+                    <Bar dataKey="entradas" name="Entradas" fill="#10b981" radius={[4, 4, 0, 0]} isAnimationActive={!reduce} />
+                    <Bar dataKey="salidas" name="Salidas" fill="#ef4444" radius={[4, 4, 0, 0]} isAnimationActive={!reduce} />
+                  </BarChart>
+                </ResponsiveContainer>
+              </div>
+            </GlassCard>
+          </StaggerItem>
+        )}
+
+        {/* Filtros de la lista: tipo + método */}
+        <StaggerItem>
+          <div className="flex flex-wrap items-center gap-2">
+            <Chips options={TIPOS} value={tipoF} onChange={setTipoF} />
+            <span className="hidden text-foreground/15 sm:inline">|</span>
+            <Chips options={METODOS_F} value={metodoF} onChange={setMetodoF} />
+          </div>
+        </StaggerItem>
+
         <div className="grid gap-6 lg:grid-cols-3">
           {/* Lista */}
           <StaggerItem className="lg:col-span-2">
@@ -201,11 +331,11 @@ export function CajaView({ initial }: { initial: Movimiento[] }) {
               <h2 className="mb-4 font-display text-lg font-semibold">
                 Entradas y salidas
               </h2>
-              {lista.length === 0 ? (
-                <p className="text-sm text-muted">No hay entradas ni salidas en este rango.</p>
+              {listaMostrada.length === 0 ? (
+                <p className="text-sm text-muted">No hay entradas ni salidas con estos filtros.</p>
               ) : (
                 <Stagger className="space-y-2">
-                  {lista.map((m) => (
+                  {listaMostrada.map((m) => (
                     <StaggerItem key={m.id}>
                       <button
                         onClick={() => setModal({ type: "detalle", mov: m })}
@@ -278,6 +408,7 @@ export function CajaView({ initial }: { initial: Movimiento[] }) {
             </GlassCard>
           </StaggerItem>
         </div>
+        </>
         )}
       </Stagger>
 
