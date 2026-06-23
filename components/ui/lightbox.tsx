@@ -124,20 +124,22 @@ export function Lightbox({
             animate={{ opacity: 1, scale: 1 }}
             exit={reduce ? { opacity: 0 } : { opacity: 0, scale: 0.98 }}
             transition={{ duration: 0.2, ease: "easeOut" }}
-            className="relative flex items-center justify-center"
+            className="relative flex flex-col items-center"
           >
-            {url ? (
-              // eslint-disable-next-line @next/next/no-img-element
-              <img
-                src={url}
-                alt="Foto de referencia"
-                className="block h-auto max-h-[90vh] w-auto max-w-[94vw] rounded-xl object-contain shadow-2xl"
-              />
-            ) : (
-              <div className="h-48 w-48 animate-pulse rounded-xl bg-white/10" />
-            )}
+            <div className="overflow-hidden rounded-2xl border border-foreground/10 bg-surface p-2 shadow-2xl">
+              {url ? (
+                // eslint-disable-next-line @next/next/no-img-element
+                <img
+                  src={url}
+                  alt="Foto de referencia"
+                  className="block max-h-[72vh] w-auto max-w-[min(680px,86vw)] rounded-lg object-contain"
+                />
+              ) : (
+                <div className="h-64 w-64 max-w-[80vw] animate-pulse rounded-lg bg-foreground/10" />
+              )}
+            </div>
             {paths.length > 1 && (
-              <span className="absolute -bottom-7 left-1/2 -translate-x-1/2 text-xs text-white/70">
+              <span className="mt-3 text-xs text-white/80">
                 {index + 1} / {paths.length}
               </span>
             )}

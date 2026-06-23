@@ -84,9 +84,9 @@ export function PedidoDetalle({
               type="button"
               onClick={() => setLbIndex(i)}
               aria-label="Ver foto en grande"
-              className="h-24 w-24 overflow-hidden rounded-xl border border-foreground/10 transition-transform hover:border-primary/40"
+              className="flex h-24 w-24 items-center justify-center overflow-hidden rounded-xl border border-foreground/10 bg-foreground/[0.04] p-1 transition-colors hover:border-primary/40"
             >
-              <SignedImg src={path} alt="Referencia" className="h-full w-full object-cover" />
+              <SignedImg src={path} alt="Referencia" className="max-h-full max-w-full rounded-lg object-contain" />
             </button>
           ))}
         </div>
