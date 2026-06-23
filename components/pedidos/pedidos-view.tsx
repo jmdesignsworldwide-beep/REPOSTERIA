@@ -13,6 +13,7 @@ import type { Cliente } from "@/lib/clientes/types";
 import { PedidoForm } from "./pedido-form";
 import { EstadoBadge, PedidoDetalle } from "./pedido-detalle";
 import { CobrarPagoForm } from "./cobrar-pago";
+import { SignedImg } from "@/components/ui/signed-img";
 import {
   actualizarPedido,
   cambiarActivoPedido,
@@ -181,8 +182,7 @@ export function PedidosView({
                   >
                     <div className="h-12 w-12 shrink-0 overflow-hidden rounded-xl bg-primary/15">
                       {p.fotos[0] ? (
-                        // eslint-disable-next-line @next/next/no-img-element
-                        <img
+                        <SignedImg
                           src={p.fotos[0]}
                           alt=""
                           className="h-full w-full object-cover"

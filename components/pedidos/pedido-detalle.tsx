@@ -4,6 +4,8 @@ import { useState } from "react";
 import { fmtRD } from "@/lib/data/mock";
 import { ESTADOS, estadoMeta, abonadoDe, balanceDe } from "@/lib/pedidos/types";
 import type { EstadoPedido, Pedido } from "@/lib/pedidos/types";
+import { SignedImg } from "@/components/ui/signed-img";
+import { Lightbox } from "@/components/ui/lightbox";
 
 export function EstadoBadge({ estado }: { estado: EstadoPedido }) {
   const e = estadoMeta(estado);
@@ -24,6 +26,7 @@ export function PedidoDetalle({
   onCobrar?: () => void;
 }) {
   const [cambiando, setCambiando] = useState<EstadoPedido | null>(null);
+  const [lbIndex, setLbIndex] = useState<number | null>(null);
   const abonado = abonadoDe(pedido);
   const balance = balanceDe(pedido);
 
@@ -72,20 +75,19 @@ export function PedidoDetalle({
         </div>
       )}
 
-      {/* Fotos */}
+      {/* Fotos (bucket privado → URL firmada). Clic → ampliar. */}
       {pedido.fotos.length > 0 && (
         <div className="flex flex-wrap gap-2">
-          {pedido.fotos.map((url) => (
-            <a
-              key={url}
-              href={url}
-              target="_blank"
-              rel="noreferrer"
-              className="h-24 w-24 overflow-hidden rounded-xl border border-foreground/10"
+          {pedido.fotos.map((path, i) => (
+            <button
+              key={path}
+              type="button"
+              onClick={() => setLbIndex(i)}
+              aria-label="Ver foto en grande"
+              className="flex h-24 w-24 items-center justify-center overflow-hidden rounded-xl border border-foreground/10 bg-foreground/[0.04] p-1 transition-colors hover:border-primary/40"
             >
-              {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img src={url} alt="Referencia" className="h-full w-full object-cover" />
-            </a>
+              <SignedImg src={path} alt="Referencia" className="max-h-full max-w-full rounded-lg object-contain" />
+            </button>
           ))}
         </div>
       )}
@@ -150,6 +152,13 @@ export function PedidoDetalle({
           {pedido.notas}
         </div>
       )}
+
+      <Lightbox
+        paths={pedido.fotos}
+        index={lbIndex}
+        onClose={() => setLbIndex(null)}
+        onIndex={setLbIndex}
+      />
     </div>
   );
 }
