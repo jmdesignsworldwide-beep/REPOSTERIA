@@ -42,7 +42,7 @@ const NAV: NavItem[] = [
   { label: "Producción", icon: Factory, href: "/produccion" },
   { label: "Empleados", icon: Contact, href: "/empleados" },
   { label: "Accesos", icon: ShieldCheck, href: "/admin", adminOnly: true },
-  { label: "Ajustes", icon: Settings, href: "#" },
+  { label: "Ajustes", icon: Settings, href: "/ajustes" },
 ];
 
 export function AppShell({
