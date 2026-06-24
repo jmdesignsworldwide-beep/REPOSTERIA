@@ -52,9 +52,13 @@ export function ReportesView() {
       ? Math.round(((ultimo.ingresos - previo.ingresos) / previo.ingresos) * 100)
       : null;
 
-  const ejeColor = theme === "dark" ? "#a89890" : "#7c6a5e";
-  const gridColor = theme === "dark" ? "rgba(245,237,228,0.08)" : "rgba(43,31,24,0.08)";
-  const tipBg = theme === "dark" ? "#1f1714" : "#fffaf4";
+  const dark = theme === "dark";
+  const ejeColor = dark ? "#a89ca0" : "#7c6a5e";
+  const gridColor = dark ? "rgba(245,237,228,0.08)" : "rgba(43,31,24,0.08)";
+  const tipBg = dark ? "#1e1b1f" : "#fffaf4";
+  // Rosa que resalta sobre el carbón (en claro mantiene la terracota de marca).
+  const chartRosa = dark ? "#E89BB3" : "#A85F52";
+  const chartCosto = dark ? "#C9899B" : "#C98A6E";
   const anim = !reduce;
 
   const ingresosSemestre = ventas.reduce((s, m) => s + m.ingresos, 0);
@@ -136,20 +140,20 @@ export function ReportesView() {
                   <AreaChart data={ventas} margin={{ left: -10, right: 8, top: 4 }}>
                     <defs>
                       <linearGradient id="gIng" x1="0" y1="0" x2="0" y2="1">
-                        <stop offset="0%" stopColor="#A85F52" stopOpacity={0.45} />
-                        <stop offset="100%" stopColor="#A85F52" stopOpacity={0} />
+                        <stop offset="0%" stopColor={chartRosa} stopOpacity={0.45} />
+                        <stop offset="100%" stopColor={chartRosa} stopOpacity={0} />
                       </linearGradient>
                       <linearGradient id="gCost" x1="0" y1="0" x2="0" y2="1">
-                        <stop offset="0%" stopColor="#C98A6E" stopOpacity={0.32} />
-                        <stop offset="100%" stopColor="#C98A6E" stopOpacity={0} />
+                        <stop offset="0%" stopColor={chartCosto} stopOpacity={0.32} />
+                        <stop offset="100%" stopColor={chartCosto} stopOpacity={0} />
                       </linearGradient>
                     </defs>
                     <XAxis dataKey="mes" tick={{ fill: ejeColor, fontSize: 12 }} axisLine={false} tickLine={false} />
                     <YAxis tick={{ fill: ejeColor, fontSize: 11 }} axisLine={false} tickLine={false} width={48}
                       tickFormatter={(v) => `${(v as number) / 1000}k`} />
                     <Tooltip contentStyle={tipStyle} formatter={(v) => fmtRD(Number(v))} />
-                    <Area type="monotone" dataKey="ingresos" stroke="#A85F52" strokeWidth={2} fill="url(#gIng)" isAnimationActive={anim} name="Entradas" />
-                    <Area type="monotone" dataKey="costos" stroke="#C98A6E" strokeWidth={2} fill="url(#gCost)" isAnimationActive={anim} name="Costos" />
+                    <Area type="monotone" dataKey="ingresos" stroke={chartRosa} strokeWidth={2} fill="url(#gIng)" isAnimationActive={anim} name="Entradas" />
+                    <Area type="monotone" dataKey="costos" stroke={chartCosto} strokeWidth={2} fill="url(#gCost)" isAnimationActive={anim} name="Costos" />
                   </AreaChart>
                 </ResponsiveContainer>
               </div>
@@ -257,7 +261,7 @@ export function ReportesView() {
                     <Bar
                       dataKey="uso"
                       radius={[6, 6, 0, 0]}
-                      fill="#A85F52"
+                      fill={chartRosa}
                       isAnimationActive={anim}
                       cursor="pointer"
                       onClick={(d) => {
