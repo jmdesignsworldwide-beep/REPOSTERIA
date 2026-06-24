@@ -108,8 +108,8 @@ export function CajaView({ initial }: { initial: Movimiento[] }) {
       .sort((a, b) => a.fecha.localeCompare(b.fecha))
       .map((r) => ({ ...r, dia: r.fecha.slice(8) }));
   }, [vivos]);
-  const ejeColor = theme === "dark" ? "#a89890" : "#7c6a5e";
-  const tipBg = theme === "dark" ? "#1f1714" : "#fffaf4";
+  const ejeColor = theme === "dark" ? "#a89ca0" : "#7c6a5e";
+  const tipBg = theme === "dark" ? "#1e1b1f" : "#fffaf4";
   const ingresos = vivos.filter((m) => m.tipo === "ingreso").reduce((s, m) => s + Number(m.monto), 0);
   const egresos = vivos.filter((m) => m.tipo === "egreso").reduce((s, m) => s + Number(m.monto), 0);
   const neto = ingresos - egresos;

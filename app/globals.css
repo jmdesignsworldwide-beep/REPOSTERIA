@@ -24,22 +24,22 @@
   --aurora-3: 243 220 216; /* rosa claro #F3DCD8 */
 }
 
-/* ───── Tema OSCURO · near-black cálido rosado + rosa empolvado claro ───── */
+/* ───── Tema OSCURO · CARBÓN limpio (negro neutro, toque cálido mínimo) ───── */
 [data-theme="dark"] {
-  --background: 28 24 21; /* near-black cálido #1C1815 */
-  --surface: 42 35 31;
-  --foreground: 245 236 230;
-  --muted: 188 162 152; /* taupe claro */
-  --border: 64 53 47;
-  --glass: 44 36 32;
-  --primary: 224 168 160; /* rosa empolvado claro #E0A8A0 (resalta en oscuro) */
-  --primary-foreground: 28 24 21;
-  --accent: 232 184 176; /* rosa claro #E8B8B0 */
-  --sidebar: 42 35 31;
-  --sidebar-foreground: 245 236 230;
-  --aurora-1: 224 168 160;
-  --aurora-2: 201 138 110;
-  --aurora-3: 184 120 110;
+  --background: 20 18 21; /* carbón casi negro #141215 */
+  --surface: 30 27 31; /* tarjetas / superficies elevadas #1E1B1F */
+  --foreground: 245 238 240; /* blanco cálido #F5EEF0 */
+  --muted: 168 156 160; /* gris claro #A89CA0 */
+  --border: 44 40 44; /* borde sutil #2C282C */
+  --glass: 30 27 31; /* superficie glass (carbón) #1E1B1F */
+  --primary: 232 155 179; /* rosa empolvado que RESALTA sobre carbón #E89BB3 */
+  --primary-foreground: 20 18 21; /* texto oscuro sobre el rosa */
+  --accent: 212 121 143; /* rosa acento más profundo #D4798F */
+  --sidebar: 26 24 26; /* menú lateral #1A181A */
+  --sidebar-foreground: 245 238 240;
+  --aurora-1: 232 155 179; /* rosa #E89BB3 */
+  --aurora-2: 196 92 127; /* rosa profundo #C45C7F */
+  --aurora-3: 120 90 110;
 }
 
 html {
