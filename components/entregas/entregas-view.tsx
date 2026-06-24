@@ -7,6 +7,7 @@ import { GlassCard } from "@/components/ui/glass-card";
 import { LiveDot } from "@/components/ui/live-dot";
 import { Modal } from "@/components/ui/modal";
 import { Disclaimer } from "@/components/ui/disclaimer";
+import { SearchInput } from "@/components/ui/controls";
 import { ESTADO_ENTREGA_META, type Entrega, type EstadoEntrega } from "@/lib/data/entregas";
 
 type Filtro = "todas" | EstadoEntrega;
@@ -38,13 +39,21 @@ function etiquetaDia(fecha: string, hoy: string): string {
  */
 export function EntregasView({ entregas }: { entregas: Entrega[] }) {
   const [filtro, setFiltro] = useState<Filtro>("todas");
+  const [busqueda, setBusqueda] = useState("");
   const [sel, setSel] = useState<Entrega | null>(null);
   const hoy = hoyStr();
 
-  const lista = useMemo(
-    () => entregas.filter((e) => filtro === "todas" || e.estado === filtro),
-    [entregas, filtro],
-  );
+  const lista = useMemo(() => {
+    const q = busqueda.trim().toLowerCase();
+    return entregas.filter(
+      (e) =>
+        (filtro === "todas" || e.estado === filtro) &&
+        (!q ||
+          e.cliente.toLowerCase().includes(q) ||
+          e.direccion.toLowerCase().includes(q) ||
+          (e.motorista ?? "").toLowerCase().includes(q)),
+    );
+  }, [entregas, filtro, busqueda]);
 
   // Agrupar por día (ordenado), como una hoja de ruta de despacho.
   const grupos = useMemo(() => {
@@ -107,6 +116,14 @@ export function EntregasView({ entregas }: { entregas: Entrega[] }) {
             Seguimiento de entregas simulado para demostración (sin rastreo GPS
             ni integración con mensajería real).
           </Disclaimer>
+        </StaggerItem>
+
+        <StaggerItem>
+          <SearchInput
+            value={busqueda}
+            onChange={setBusqueda}
+            placeholder="Buscar cliente, dirección o motorista…"
+          />
         </StaggerItem>
 
         <StaggerItem>

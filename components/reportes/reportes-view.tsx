@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import {
   Area,
   AreaChart,
@@ -19,6 +19,7 @@ import { Stagger, StaggerItem } from "@/components/ui/stagger";
 import { GlassCard } from "@/components/ui/glass-card";
 import { Modal } from "@/components/ui/modal";
 import { CountUp } from "@/components/ui/count-up";
+import { Chips } from "@/components/ui/controls";
 import { useTheme } from "@/components/theme-provider";
 import { fmtRD } from "@/lib/data/mock";
 import {
@@ -31,20 +32,35 @@ import {
 } from "@/lib/data/reportes";
 
 type Desglose = { titulo: string; lineas: { label: string; valor: string }[] };
+type Periodo = "3" | "6";
 
 export function ReportesView() {
   const reduce = useReducedMotion();
   const { theme } = useTheme();
   const [desglose, setDesglose] = useState<Desglose | null>(null);
+  const [periodo, setPeriodo] = useState<Periodo>("6");
+
+  const ventas = useMemo(
+    () => VENTAS_MES.slice(-Number(periodo)),
+    [periodo],
+  );
+  // Comparación: último mes vs el anterior (entradas).
+  const ultimo = ventas[ventas.length - 1];
+  const previo = ventas[ventas.length - 2];
+  const delta =
+    ultimo && previo && previo.ingresos > 0
+      ? Math.round(((ultimo.ingresos - previo.ingresos) / previo.ingresos) * 100)
+      : null;
 
   const ejeColor = theme === "dark" ? "#a89890" : "#7c6a5e";
   const gridColor = theme === "dark" ? "rgba(245,237,228,0.08)" : "rgba(43,31,24,0.08)";
   const tipBg = theme === "dark" ? "#1f1714" : "#fffaf4";
   const anim = !reduce;
 
-  const ingresosSemestre = VENTAS_MES.reduce((s, m) => s + m.ingresos, 0);
-  const costosSemestre = VENTAS_MES.reduce((s, m) => s + m.costos, 0);
+  const ingresosSemestre = ventas.reduce((s, m) => s + m.ingresos, 0);
+  const costosSemestre = ventas.reduce((s, m) => s + m.costos, 0);
   const margen = Math.round(((ingresosSemestre - costosSemestre) / ingresosSemestre) * 100);
+  const periodoLabel = `${periodo} meses`;
   const totalOcasion = PEDIDOS_OCASION.reduce((s, o) => s + o.valor, 0);
 
   const tipStyle = {
@@ -59,17 +75,42 @@ export function ReportesView() {
     <>
       <Stagger className="mx-auto max-w-6xl space-y-6">
         <StaggerItem>
-          <h1 className="font-display text-3xl font-bold tracking-tight sm:text-4xl">
-            Reportes y estadísticas
-          </h1>
-          <p className="mt-1 text-sm text-muted">Resumen del semestre</p>
+          <div className="flex flex-wrap items-end justify-between gap-3">
+            <div>
+              <h1 className="font-display text-3xl font-bold tracking-tight sm:text-4xl">
+                Reportes y estadísticas
+              </h1>
+              <p className="mt-1 text-sm text-muted">
+                Resumen de los últimos {periodoLabel}
+                {delta !== null && (
+                  <span
+                    className={`ml-2 font-medium ${
+                      delta >= 0
+                        ? "text-emerald-600 dark:text-emerald-400"
+                        : "text-red-600 dark:text-red-400"
+                    }`}
+                  >
+                    {delta >= 0 ? "▲" : "▼"} {Math.abs(delta)}% vs mes anterior
+                  </span>
+                )}
+              </p>
+            </div>
+            <Chips
+              value={periodo}
+              onChange={setPeriodo}
+              options={[
+                { id: "3", label: "Últimos 3 meses" },
+                { id: "6", label: "Últimos 6 meses" },
+              ]}
+            />
+          </div>
         </StaggerItem>
 
         {/* KPIs */}
         <div className="grid grid-cols-3 gap-4">
           {[
-            { label: "Entradas (6 meses)", value: ingresosSemestre, prefix: "RD$ ", cls: "text-emerald-600 dark:text-emerald-400" },
-            { label: "Costos (6 meses)", value: costosSemestre, prefix: "RD$ ", cls: "text-red-600 dark:text-red-400" },
+            { label: `Entradas (${periodoLabel})`, value: ingresosSemestre, prefix: "RD$ ", cls: "text-emerald-600 dark:text-emerald-400" },
+            { label: `Costos (${periodoLabel})`, value: costosSemestre, prefix: "RD$ ", cls: "text-red-600 dark:text-red-400" },
             { label: "Margen", value: margen, prefix: "", suffix: "%", cls: "text-primary" },
           ].map((k) => (
             <StaggerItem key={k.label}>
@@ -92,7 +133,7 @@ export function ReportesView() {
               </h2>
               <div className="h-64 w-full">
                 <ResponsiveContainer width="100%" height="100%">
-                  <AreaChart data={VENTAS_MES} margin={{ left: -10, right: 8, top: 4 }}>
+                  <AreaChart data={ventas} margin={{ left: -10, right: 8, top: 4 }}>
                     <defs>
                       <linearGradient id="gIng" x1="0" y1="0" x2="0" y2="1">
                         <stop offset="0%" stopColor="#A85F52" stopOpacity={0.45} />
@@ -213,7 +254,23 @@ export function ReportesView() {
                     <XAxis dataKey="nombre" tick={{ fill: ejeColor, fontSize: 10 }} axisLine={false} tickLine={false} interval={0} />
                     <YAxis hide />
                     <Tooltip contentStyle={tipStyle} cursor={{ fill: gridColor }} />
-                    <Bar dataKey="uso" radius={[6, 6, 0, 0]} fill="#A85F52" isAnimationActive={anim} />
+                    <Bar
+                      dataKey="uso"
+                      radius={[6, 6, 0, 0]}
+                      fill="#A85F52"
+                      isAnimationActive={anim}
+                      cursor="pointer"
+                      onClick={(d) => {
+                        const row = d as unknown as { nombre?: string; uso?: number };
+                        setDesglose({
+                          titulo: row.nombre ?? "",
+                          lineas: [
+                            { label: "Uso", valor: String(row.uso ?? 0) },
+                            { label: "Periodo", valor: `Últimos ${periodoLabel}` },
+                          ],
+                        });
+                      }}
+                    />
                   </BarChart>
                 </ResponsiveContainer>
               </div>

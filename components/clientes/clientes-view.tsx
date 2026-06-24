@@ -6,6 +6,8 @@ import { Stagger, StaggerItem } from "@/components/ui/stagger";
 import { Magnetic } from "@/components/ui/magnetic";
 import { GlassCard } from "@/components/ui/glass-card";
 import { Modal } from "@/components/ui/modal";
+import { SearchInput, Chips, SortSelect } from "@/components/ui/controls";
+import { fmtRD } from "@/lib/data/mock";
 import { ClienteForm } from "./cliente-form";
 import { ClienteFicha } from "./cliente-ficha";
 import {
@@ -16,7 +18,10 @@ import {
 } from "@/app/(app)/clientes/actions";
 import type { Cliente, ClienteInput } from "@/lib/clientes/types";
 
+export type ClienteStats = { saldo: number; pendientes: number };
+
 type Filtro = "activos" | "inactivos" | "todos";
+type Orden = "reciente" | "nombre" | "saldo";
 
 type ModalState =
   | { type: "nuevo" }
@@ -27,24 +32,32 @@ type ModalState =
 
 export function ClientesView({
   initial,
+  stats = {},
   userEmail,
   loadError,
 }: {
   initial: Cliente[];
+  stats?: Record<string, ClienteStats>;
   userEmail: string;
   loadError: string | null;
 }) {
   const router = useRouter();
   const [busqueda, setBusqueda] = useState("");
   const [filtro, setFiltro] = useState<Filtro>("activos");
+  const [orden, setOrden] = useState<Orden>("nombre");
+  const [soloPendientes, setSoloPendientes] = useState(false);
   const [modal, setModal] = useState<ModalState>(null);
   const [pending, startTransition] = useTransition();
 
+  const saldoDe = (id: string) => stats[id]?.saldo ?? 0;
+  const pendientesDe = (id: string) => stats[id]?.pendientes ?? 0;
+
   const lista = useMemo(() => {
     const q = busqueda.trim().toLowerCase();
-    return initial.filter((c) => {
+    const arr = initial.filter((c) => {
       if (filtro === "activos" && !c.activo) return false;
       if (filtro === "inactivos" && c.activo) return false;
+      if (soloPendientes && pendientesDe(c.id) === 0) return false;
       if (!q) return true;
       return (
         c.nombre.toLowerCase().includes(q) ||
@@ -53,7 +66,14 @@ export function ClientesView({
         (c.correo ?? "").toLowerCase().includes(q)
       );
     });
-  }, [initial, busqueda, filtro]);
+    const ord = [...arr];
+    if (orden === "saldo") ord.sort((a, b) => saldoDe(b.id) - saldoDe(a.id));
+    else if (orden === "reciente")
+      ord.sort((a, b) => (b.created_at ?? "").localeCompare(a.created_at ?? ""));
+    else ord.sort((a, b) => a.nombre.localeCompare(b.nombre));
+    return ord;
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [initial, busqueda, filtro, orden, soloPendientes, stats]);
 
   function refrescar() {
     router.refresh();
@@ -97,6 +117,7 @@ export function ClientesView({
     { id: "inactivos", label: "Inactivos" },
     { id: "todos", label: "Todos" },
   ];
+  const conPendientes = initial.filter((c) => pendientesDe(c.id) > 0).length;
 
   return (
     <>
@@ -132,29 +153,37 @@ export function ClientesView({
           </div>
         </StaggerItem>
 
-        {/* Buscador + filtros */}
+        {/* Buscador + filtros + orden */}
         <StaggerItem>
-          <div className="flex flex-col gap-3 sm:flex-row sm:items-center">
-            <input
-              value={busqueda}
-              onChange={(e) => setBusqueda(e.target.value)}
-              placeholder="Buscar por nombre, teléfono, cédula o correo…"
-              className="flex-1 rounded-xl border border-foreground/15 bg-background/60 px-4 py-2.5 text-sm outline-none backdrop-blur transition-colors focus:border-primary"
-            />
-            <div className="inline-flex rounded-xl border border-foreground/10 bg-glass/50 p-1 backdrop-blur">
-              {FILTROS.map((f) => (
-                <button
-                  key={f.id}
-                  onClick={() => setFiltro(f.id)}
-                  className={`rounded-lg px-3 py-1.5 text-sm font-medium transition-colors ${
-                    filtro === f.id
-                      ? "bg-primary text-primary-foreground"
-                      : "text-muted hover:text-foreground"
-                  }`}
-                >
-                  {f.label}
-                </button>
-              ))}
+          <div className="space-y-3">
+            <div className="flex flex-col gap-3 sm:flex-row sm:items-center">
+              <SearchInput
+                value={busqueda}
+                onChange={setBusqueda}
+                placeholder="Buscar por nombre, teléfono, cédula o correo…"
+              />
+              <SortSelect
+                value={orden}
+                onChange={setOrden}
+                options={[
+                  { id: "nombre", label: "Nombre (A-Z)" },
+                  { id: "reciente", label: "Más reciente" },
+                  { id: "saldo", label: "Mayor pendiente" },
+                ]}
+              />
+            </div>
+            <div className="flex flex-wrap items-center gap-2">
+              <Chips options={FILTROS} value={filtro} onChange={setFiltro} />
+              <button
+                onClick={() => setSoloPendientes((v) => !v)}
+                className={`rounded-full px-3 py-1.5 text-sm font-medium transition-colors ${
+                  soloPendientes
+                    ? "bg-primary text-primary-foreground"
+                    : "border border-foreground/10 bg-glass/60 text-muted hover:text-foreground"
+                }`}
+              >
+                Con pendientes{conPendientes ? ` (${conPendientes})` : ""}
+              </button>
             </div>
           </div>
         </StaggerItem>
@@ -208,7 +237,20 @@ export function ClientesView({
                         {c.correo ? ` · ${c.correo}` : ""}
                       </p>
                     </div>
-                    <span className="shrink-0 text-muted">→</span>
+                    <div className="flex shrink-0 flex-col items-end gap-1">
+                      {saldoDe(c.id) > 0 ? (
+                        <span className="rounded-full bg-primary/10 px-2 py-0.5 text-xs font-semibold tabular-nums text-primary">
+                          {fmtRD(saldoDe(c.id))}
+                        </span>
+                      ) : (
+                        <span className="text-muted">→</span>
+                      )}
+                      {pendientesDe(c.id) > 0 && (
+                        <span className="text-[10px] text-muted">
+                          {pendientesDe(c.id)} pendiente(s)
+                        </span>
+                      )}
+                    </div>
                   </button>
                 </Magnetic>
               </StaggerItem>

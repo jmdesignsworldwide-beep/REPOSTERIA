@@ -6,6 +6,7 @@ import { Magnetic } from "@/components/ui/magnetic";
 import { GlassCard } from "@/components/ui/glass-card";
 import { Modal } from "@/components/ui/modal";
 import { CountUp } from "@/components/ui/count-up";
+import { SearchInput } from "@/components/ui/controls";
 import { fmtRD } from "@/lib/data/mock";
 import {
   COMPRAS,
@@ -21,12 +22,19 @@ type Filtro = "Todos" | CategoriaInv;
 
 export function InventarioView({ embedded = false }: { embedded?: boolean }) {
   const [filtro, setFiltro] = useState<Filtro>("Todos");
+  const [busqueda, setBusqueda] = useState("");
   const [sel, setSel] = useState<ItemInventario | null>(null);
 
-  const lista = useMemo(
-    () => INVENTARIO.filter((i) => filtro === "Todos" || i.categoria === filtro),
-    [filtro],
-  );
+  const lista = useMemo(() => {
+    const q = busqueda.trim().toLowerCase();
+    return INVENTARIO.filter(
+      (i) =>
+        (filtro === "Todos" || i.categoria === filtro) &&
+        (!q ||
+          i.nombre.toLowerCase().includes(q) ||
+          i.proveedor.toLowerCase().includes(q)),
+    );
+  }, [filtro, busqueda]);
 
   const bajos = INVENTARIO.filter((i) => estadoStock(i) === "bajo").length;
   const vencen = INVENTARIO.filter((i) => porVencer(i)).length;
@@ -64,6 +72,15 @@ export function InventarioView({ embedded = false }: { embedded?: boolean }) {
             </StaggerItem>
           ))}
         </div>
+
+        {/* Búsqueda */}
+        <StaggerItem>
+          <SearchInput
+            value={busqueda}
+            onChange={setBusqueda}
+            placeholder="Buscar ingrediente o proveedor…"
+          />
+        </StaggerItem>
 
         {/* Filtro */}
         <StaggerItem>

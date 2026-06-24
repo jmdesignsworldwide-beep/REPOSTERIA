@@ -15,6 +15,7 @@ import { EstadoBadge, PedidoDetalle } from "./pedido-detalle";
 import { CobrarPagoForm } from "./cobrar-pago";
 import { PedidosTablero } from "./pedidos-tablero";
 import { SignedImg } from "@/components/ui/signed-img";
+import { SearchInput, Chips, SortSelect } from "@/components/ui/controls";
 import {
   actualizarPedido,
   cambiarActivoPedido,
@@ -23,6 +24,35 @@ import {
 } from "@/app/(app)/pedidos/actions";
 
 type Filtro = EstadoPedido | "todos";
+type Rango = "todos" | "hoy" | "semana" | "mes" | "futuros";
+type Orden = "fecha" | "monto" | "cliente";
+
+const DOT: Record<EstadoPedido, string> = {
+  pendiente: "bg-amber-500",
+  en_proceso: "bg-sky-500",
+  listo: "bg-emerald-500",
+  entregado: "bg-foreground/40",
+};
+
+const pad = (n: number) => String(n).padStart(2, "0");
+const hoyISO = () => {
+  const d = new Date();
+  return `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}`;
+};
+function enRango(fecha: string, rango: Rango): boolean {
+  if (rango === "todos") return true;
+  const hoy = hoyISO();
+  if (rango === "futuros") return fecha >= hoy;
+  const d = new Date();
+  if (rango === "hoy") return fecha === hoy;
+  if (rango === "semana") {
+    const fin = new Date(d);
+    fin.setDate(fin.getDate() + 6);
+    return fecha >= hoy && fecha <= `${fin.getFullYear()}-${pad(fin.getMonth() + 1)}-${pad(fin.getDate())}`;
+  }
+  // mes
+  return fecha.slice(0, 7) === hoy.slice(0, 7);
+}
 
 type ModalState =
   | { type: "nuevo" }
@@ -44,6 +74,8 @@ export function PedidosView({
   const [vista, setVista] = useState<"lista" | "tablero">("lista");
   const [busqueda, setBusqueda] = useState("");
   const [filtro, setFiltro] = useState<Filtro>("todos");
+  const [rango, setRango] = useState<Rango>("todos");
+  const [orden, setOrden] = useState<Orden>("fecha");
   const [modal, setModal] = useState<ModalState>(null);
   const [nuevaFecha, setNuevaFecha] = useState<string | undefined>(undefined);
   const [pending, startTransition] = useTransition();
@@ -63,11 +95,11 @@ export function PedidosView({
     }
   }, [searchParams, router]);
 
-  const lista = useMemo(() => {
+  // Base: búsqueda + rango de fecha (la usan Lista y Tablero por igual).
+  const base = useMemo(() => {
     const q = busqueda.trim().toLowerCase();
-    return initial.filter((p) => {
-      if (!p.activo) return false;
-      if (filtro !== "todos" && p.estado !== filtro) return false;
+    return activos.filter((p) => {
+      if (!enRango(p.fecha_entrega, rango)) return false;
       if (!q) return true;
       return (
         (p.cliente?.nombre ?? "").toLowerCase().includes(q) ||
@@ -76,7 +108,20 @@ export function PedidosView({
         p.items.some((i) => i.producto.toLowerCase().includes(q))
       );
     });
-  }, [initial, busqueda, filtro]);
+  }, [activos, busqueda, rango]);
+
+  // Lista: base + estado + orden.
+  const lista = useMemo(() => {
+    const arr = base.filter((p) => filtro === "todos" || p.estado === filtro);
+    const ord = [...arr];
+    if (orden === "monto") ord.sort((a, b) => b.total - a.total);
+    else if (orden === "cliente")
+      ord.sort((a, b) =>
+        (a.cliente?.nombre ?? "").localeCompare(b.cliente?.nombre ?? ""),
+      );
+    else ord.sort((a, b) => a.fecha_entrega.localeCompare(b.fecha_entrega));
+    return ord;
+  }, [base, filtro, orden]);
 
   function refrescar() {
     router.refresh();
@@ -123,9 +168,20 @@ export function PedidosView({
     });
   }
 
-  const FILTROS: { id: Filtro; label: string }[] = [
+  const FILTROS: { id: Filtro; label: string; dot?: string }[] = [
     { id: "todos", label: "Todos" },
-    ...ESTADOS.map((e) => ({ id: e.id as Filtro, label: e.label })),
+    ...ESTADOS.map((e) => ({
+      id: e.id as Filtro,
+      label: e.label,
+      dot: DOT[e.id],
+    })),
+  ];
+  const RANGOS: { id: Rango; label: string }[] = [
+    { id: "todos", label: "Todas las fechas" },
+    { id: "hoy", label: "Hoy" },
+    { id: "semana", label: "Esta semana" },
+    { id: "mes", label: "Este mes" },
+    { id: "futuros", label: "Próximos" },
   ];
 
   return (
@@ -152,60 +208,59 @@ export function PedidosView({
           </div>
         </StaggerItem>
 
-        {/* Selector de vista: Lista o Tablero (kanban de producción) */}
+        {/* Controles: búsqueda + rango + vista (aplican a Lista y Tablero) */}
         <StaggerItem>
-          <div className="inline-flex rounded-xl border border-foreground/10 bg-glass/50 p-1 backdrop-blur">
-            {(
-              [
-                { id: "lista", label: "📋 Lista" },
-                { id: "tablero", label: "🗂️ Tablero" },
-              ] as const
-            ).map((v) => (
-              <button
-                key={v.id}
-                onClick={() => setVista(v.id)}
-                className={`rounded-lg px-4 py-1.5 text-sm font-medium transition-colors ${
-                  vista === v.id
-                    ? "bg-primary text-primary-foreground"
-                    : "text-muted hover:text-foreground"
-                }`}
-              >
-                {v.label}
-              </button>
-            ))}
+          <div className="space-y-3">
+            <div className="flex flex-col gap-3 sm:flex-row sm:items-center">
+              <SearchInput
+                value={busqueda}
+                onChange={setBusqueda}
+                placeholder="Buscar por cliente, número, producto u ocasión…"
+              />
+              <div className="inline-flex rounded-xl border border-foreground/10 bg-glass/50 p-1 backdrop-blur">
+                {(
+                  [
+                    { id: "lista", label: "📋 Lista" },
+                    { id: "tablero", label: "🗂️ Tablero" },
+                  ] as const
+                ).map((v) => (
+                  <button
+                    key={v.id}
+                    onClick={() => setVista(v.id)}
+                    className={`rounded-lg px-4 py-1.5 text-sm font-medium transition-colors ${
+                      vista === v.id
+                        ? "bg-primary text-primary-foreground"
+                        : "text-muted hover:text-foreground"
+                    }`}
+                  >
+                    {v.label}
+                  </button>
+                ))}
+              </div>
+            </div>
+            <Chips options={RANGOS} value={rango} onChange={setRango} />
           </div>
         </StaggerItem>
 
         {vista === "tablero" ? (
           <PedidosTablero
-            pedidos={activos}
+            pedidos={base}
             onAbrir={(p) => setModal({ type: "detalle", pedido: p })}
           />
         ) : (
           <>
         <StaggerItem>
-          <div className="flex flex-col gap-3 sm:flex-row sm:items-center">
-            <input
-              value={busqueda}
-              onChange={(e) => setBusqueda(e.target.value)}
-              placeholder="Buscar por cliente, número, producto u ocasión…"
-              className="flex-1 rounded-xl border border-foreground/15 bg-background/60 px-4 py-2.5 text-sm outline-none backdrop-blur transition-colors focus:border-primary"
+          <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+            <Chips options={FILTROS} value={filtro} onChange={setFiltro} />
+            <SortSelect
+              value={orden}
+              onChange={setOrden}
+              options={[
+                { id: "fecha", label: "Fecha de entrega" },
+                { id: "monto", label: "Monto (mayor)" },
+                { id: "cliente", label: "Cliente (A-Z)" },
+              ]}
             />
-            <div className="flex flex-wrap gap-1 rounded-xl border border-foreground/10 bg-glass/50 p-1 backdrop-blur">
-              {FILTROS.map((f) => (
-                <button
-                  key={f.id}
-                  onClick={() => setFiltro(f.id)}
-                  className={`rounded-lg px-3 py-1.5 text-sm font-medium transition-colors ${
-                    filtro === f.id
-                      ? "bg-primary text-primary-foreground"
-                      : "text-muted hover:text-foreground"
-                  }`}
-                >
-                  {f.label}
-                </button>
-              ))}
-            </div>
           </div>
         </StaggerItem>
 
